@@ -1,0 +1,287 @@
+{
+	"info": {
+		"_postman_id": "63d8a2b7-91b8-4cab-a2f1-bf7382421ea6",
+		"name": "Utopia",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "CreateAirport",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"city\": \"Los Angeles\",\r\n    \"iataId\": \"LAX\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8083/airport",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8083",
+					"path": [
+						"airport"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetAirport",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8083/airport",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8083",
+					"path": [
+						"airport"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CreateAirplane",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"maxCapacity\": 11\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8083/airplane",
+					"host": [
+						"localhost"
+					],
+					"port": "8083",
+					"path": [
+						"airplane"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CreateFlight",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"originId\": 2,\r\n    \"destinationId\": 1,\r\n    \"airplaneId\": 1,\r\n    \"filledSeats\": 3\r\n    \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8083/flight",
+					"host": [
+						"localhost"
+					],
+					"port": "8083",
+					"path": [
+						"flight"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetFlight",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8083/flight",
+					"host": [
+						"localhost"
+					],
+					"port": "8083",
+					"path": [
+						"flight"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "UpdateAirport",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"city\": \"Dallas\",\r\n    \"iataId\": \"DAL\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8083/airport/1",
+					"host": [
+						"localhost"
+					],
+					"port": "8083",
+					"path": [
+						"airport",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DeleteAirport",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "localhost:8083/airport/9",
+					"host": [
+						"localhost"
+					],
+					"port": "8083",
+					"path": [
+						"airport",
+						"9"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "UpdateFlight",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"originId\": 2,\r\n    \"destinationId\": 1,\r\n    \"airplaneId\": 1,\r\n    \"filledSeats\": 4\r\n\r\n\r\n\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8083/flight/2",
+					"host": [
+						"localhost"
+					],
+					"port": "8083",
+					"path": [
+						"flight",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DeleteFlight",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "localhost:8083/flight/5",
+					"host": [
+						"localhost"
+					],
+					"port": "8083",
+					"path": [
+						"flight",
+						"5"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetAirplane",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8083/airplane",
+					"host": [
+						"localhost"
+					],
+					"port": "8083",
+					"path": [
+						"airplane"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "UpdateAirplane",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"maxCapacity\": 200556\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8083/airplane/1",
+					"host": [
+						"localhost"
+					],
+					"port": "8083",
+					"path": [
+						"airplane",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DeleteAirplane",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "localhost:8083/airplane/5",
+					"host": [
+						"localhost"
+					],
+					"port": "8083",
+					"path": [
+						"airplane",
+						"5"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
