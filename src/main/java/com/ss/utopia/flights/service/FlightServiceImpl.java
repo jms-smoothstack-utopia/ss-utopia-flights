@@ -12,31 +12,25 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class FlightServiceImpl implements FlightService {
 
-  private final FlightRepository repository;
+  private final FlightRepository flightRepository;
   private final AirportService airportService;
   private final AirplaneService airplaneService;
 
-  public FlightServiceImpl(FlightRepository repository,
-                           AirportService airportService,
-                           AirplaneService airplaneService) {
-    this.repository = repository;
-    this.airportService = airportService;
-    this.airplaneService = airplaneService;
-  }
-
   @Override
   public List<Flight> getAllFlights() {
-    return repository.findAll();
+    return flightRepository.findAll();
   }
 
   @Override
   public Flight getFlightById(Long id) {
-    return repository.findById(id)
+    return flightRepository.findById(id)
         .orElseThrow(() -> new NoSuchFlightException(id));
   }
 
@@ -52,7 +46,7 @@ public class FlightServiceImpl implements FlightService {
         .airplane(airplane)
         .build();
 
-    flight = repository.save(flight);
+    flight = flightRepository.save(flight);
 
     // add seats to the flight
     var flightId = flight.getId();
@@ -77,24 +71,22 @@ public class FlightServiceImpl implements FlightService {
 
     flight.setSeats(seats);
 
-    return repository.save(flight);
+    return flightRepository.save(flight);
   }
 
   @Override
   public void updateFlight(Long id, UpdateFlightDto updateFlightDto) {
     //todo this is a complicated use case
     throw new IllegalStateException("NOT IMPLEMENTED");
-//    var toUpdate = getFlightById(id);
-//    updateFlightDto.update(toUpdate);
-//    repository.save(toUpdate);
   }
 
   @Override
   public void deleteFlight(Long id) {
-    repository.findById(id)
-        .ifPresent(repository::delete);
+    flightRepository.findById(id)
+        .ifPresent(flightRepository::delete);
   }
 
+  @Override
   public List<Seat> getFlightSeats(Long flightId) {
     var flight = getFlightById(flightId);
     return flight.getSeats();
@@ -117,6 +109,6 @@ public class FlightServiceImpl implements FlightService {
           }
         });
 
-    repository.save(flight);
+    flightRepository.save(flight);
   }
 }

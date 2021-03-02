@@ -22,10 +22,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
-@RequestMapping(EndpointConstants.AIRPORTS_ENDPOINT)
+@RequestMapping(EndpointConstants.API_V_0_1_AIRPORTS)
 public class AirportsController {
 
-  public static final String MAPPING = EndpointConstants.AIRPORTS_ENDPOINT;
+  public static final String MAPPING = EndpointConstants.API_V_0_1_AIRPORTS;
 
   private final AirportService service;
 
