@@ -5,16 +5,14 @@ import com.ss.utopia.flights.entity.airplane.Airplane;
 import com.ss.utopia.flights.exception.NoSuchAirplaneException;
 import com.ss.utopia.flights.repository.AirplaneRepository;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class AirplaneServiceImpl implements AirplaneService {
 
   private final AirplaneRepository repository;
-
-  public AirplaneServiceImpl(AirplaneRepository repository) {
-    this.repository = repository;
-  }
 
   @Override
   public List<Airplane> getAllAirplanes() {
