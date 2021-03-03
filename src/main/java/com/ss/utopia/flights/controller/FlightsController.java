@@ -1,6 +1,7 @@
 package com.ss.utopia.flights.controller;
 
 import com.ss.utopia.flights.dto.flight.CreateFlightDto;
+import com.ss.utopia.flights.dto.flight.FlightSearchDto;
 import com.ss.utopia.flights.dto.flight.UpdateFlightDto;
 import com.ss.utopia.flights.dto.flight.UpdateSeatDto;
 import com.ss.utopia.flights.entity.flight.Flight;
@@ -52,6 +53,17 @@ public class FlightsController {
   public ResponseEntity<Flight> getFlightById(@PathVariable Long id) {
     LOGGER.info("GET Flight id=" + id);
     return ResponseEntity.of(Optional.ofNullable(service.getFlightById(id)));
+  }
+
+  @GetMapping(value = "/flight-search", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+  public ResponseEntity<Map<String, List<Flight>>> getFlightByCriteria(@Valid @RequestBody FlightSearchDto flightSearchDto){
+    LOGGER.info("Getting flights with certain criteria= " + flightSearchDto);
+    var airports = service.getFlightByCriteria(flightSearchDto);
+    if (airports.isEmpty()){
+      return ResponseEntity.noContent().build();
+    }
+    return ResponseEntity.ok(Map.of("Hello", null));
+    //return ResponseEntity.ok(airports);
   }
 
   @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})

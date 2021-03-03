@@ -1,6 +1,7 @@
 package com.ss.utopia.flights.service;
 
 import com.ss.utopia.flights.dto.flight.CreateFlightDto;
+import com.ss.utopia.flights.dto.flight.FlightSearchDto;
 import com.ss.utopia.flights.dto.flight.UpdateFlightDto;
 import com.ss.utopia.flights.dto.flight.UpdateSeatDto;
 import com.ss.utopia.flights.entity.flight.Flight;
@@ -23,4 +24,6 @@ public interface FlightService {
   List<Seat> getFlightSeats(Long flightId);
 
   void updateFlightSeats(Long flightId, Map<String, UpdateSeatDto> seatDtoList);
+
+  Map<String, ?> getFlightByCriteria(FlightSearchDto flightSearchDto);
 }

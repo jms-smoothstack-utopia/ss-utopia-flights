@@ -11,4 +11,5 @@ public interface AirportService {
   Airport createNewAirport(CreateAirportDto createAirportDto);
   void updateAirport(String id, UpdateAirportDto updateAirportDto);
   void deleteAirport(String id);
+  List<String> getAirportsByServicingCity(String servicingArea);
 }
