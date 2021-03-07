@@ -10,6 +10,8 @@ import com.ss.utopia.flights.exception.DuplicateAirportException;
 import com.ss.utopia.flights.exception.NoSuchAirportException;
 import com.ss.utopia.flights.repository.AirportRepository;
 import com.ss.utopia.flights.repository.ServicingAreaRepository;
+
+import java.util.Collection;
 import java.util.List;
 import org.springframework.stereotype.Service;
 
@@ -18,10 +20,12 @@ public class AirportServiceImpl implements AirportService {
 
   private final AirportRepository repository;
   private final ServicingAreaRepository servicingAreaRepository;
+  private final ServicingAreaService servicingAreaService;
 
-  public AirportServiceImpl(AirportRepository repository, ServicingAreaRepository servicingAreaRepository) {
+  public AirportServiceImpl(AirportRepository repository, ServicingAreaRepository servicingAreaRepository, ServicingAreaService servicingAreaService) {
     this.repository = repository;
     this.servicingAreaRepository = servicingAreaRepository;
+    this.servicingAreaService = servicingAreaService;
 
   }
 
@@ -41,7 +45,10 @@ public class AirportServiceImpl implements AirportService {
           throw new DuplicateAirportException(airport.getIataId());
         });
 
-    return repository.save(createAirportDto.mapToEntity());
+    //Need to map to entity
+    ServicingArea servicingArea = servicingAreaService.getServicingAreaById(createAirportDto.getServicingAreaId());
+
+    return repository.save(createAirportDto.mapToEntity(servicingArea));
   }
 
   public void updateAirport(String id, UpdateAirportDto updateAirportDto) {
@@ -56,21 +63,14 @@ public class AirportServiceImpl implements AirportService {
         .ifPresent(repository::delete);
   }
 
-  public Long getServicingAreaId(String servicingArea){
-    var specificLocation = servicingAreaRepository.findByServicingArea(servicingArea);
-    return specificLocation.map(ServicingArea::getId).orElse(null);
+  @Override
+  public List<Airport> getAirportsByServicingCity(ServicingArea servicingArea) {
+      return repository.findAll().stream().filter(e -> e.getServicingArea()
+          .equals(servicingArea)).collect(
+          toList());
   }
 
-  @Override
-  public List<String> getAirportsByServicingCity(String servicingArea) {
-    var specificLocation = getServicingAreaId(servicingArea);
-    if (specificLocation == null){
-      return null;
-    }
-    else{
-      return repository.findAll().stream().filter(e -> e.getServicingArea().getId()
-          .equals(specificLocation)).map(Airport::getIataId).collect(
-          toList());
-    }
+  public Airport getAirportOrReturnNull(String area){
+    return repository.findById(area).orElse(null);
   }
 }

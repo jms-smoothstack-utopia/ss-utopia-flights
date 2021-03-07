@@ -3,6 +3,8 @@ package com.ss.utopia.flights.controller;
 import com.ss.utopia.flights.dto.airport.ServicingAreaDto;
 import com.ss.utopia.flights.entity.airport.ServicingArea;
 import com.ss.utopia.flights.service.ServicingAreaService;
+
+import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 import javax.validation.Valid;
@@ -52,5 +54,7 @@ private final ServicingAreaService servicingAreaService;
   public ResponseEntity<ServicingArea> createNewServicingArea(@Valid @RequestBody ServicingAreaDto servicingAreaDto){
     log.info("Posting new Servicing Area");
     ServicingArea servicingArea = servicingAreaService.createNewServicingArea(servicingAreaDto);
+    var uri = URI.create("/servicing-area/" + servicingArea.getId());
+    return ResponseEntity.created(uri).body(servicingArea);
   }
 }

@@ -11,4 +11,6 @@ public interface ServicingAreaService {
   ServicingArea getServicingAreaById(Long id);
 
   ServicingArea createNewServicingArea(ServicingAreaDto servicingAreaDto);
+
+  ServicingArea returnServicingArea(String servicingArea);
 }

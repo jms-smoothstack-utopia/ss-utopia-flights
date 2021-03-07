@@ -21,7 +21,6 @@ public class ServicingArea {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  //Like the DMV
   @NotBlank
   private String servicingArea;
 }

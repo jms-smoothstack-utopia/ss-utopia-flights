@@ -9,7 +9,8 @@ import java.util.stream.Collectors;
 
 public enum SeatClass {
   ECONOMY,
-  BUSINESS;
+  BUSINESS,
+  FIRST_CLASS;
 
   private static final List<String> stringValues = Arrays.stream(SeatClass.values())
       .map(Enum::toString)

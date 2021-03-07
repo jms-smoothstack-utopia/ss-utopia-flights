@@ -8,22 +8,17 @@ import com.ss.utopia.flights.entity.flight.Flight;
 import com.ss.utopia.flights.entity.flight.Seat;
 import com.ss.utopia.flights.service.FlightService;
 import java.net.URI;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/flights")
@@ -56,14 +51,31 @@ public class FlightsController {
   }
 
   @GetMapping(value = "/flight-search", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-  public ResponseEntity<Map<String, List<Flight>>> getFlightByCriteria(@Valid @RequestBody FlightSearchDto flightSearchDto){
+  public ResponseEntity<?> getFlightByCriteria(
+          @RequestParam(name = "origin") String[] origins,
+          @RequestParam(name = "destinations")String[] destinations,
+          @RequestParam(name = "departure") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate departureDate,
+          @RequestParam(name = "return", required = false) Optional<LocalDate> returnDate,
+          @RequestParam(name = "numberOfPassengers", required = false) Optional<Integer> numberOfPassengers,
+          @RequestParam(value = "multiHop", required = false, defaultValue = "false")Boolean multiHop,
+          @RequestParam(value = "sort", required = false, defaultValue = "expensive")String sortBy
+          )
+          //Change to Flight Query Parameters
+  {
+    FlightSearchDto flightSearchDto = new FlightSearchDto();
+    flightSearchDto.setOrigins(origins);
+    flightSearchDto.setDestinations(destinations);
+    flightSearchDto.setDepartureDate(departureDate);
+    flightSearchDto.setReturnDate(returnDate);
+    flightSearchDto.setNumberOfPassengers(numberOfPassengers);
+    flightSearchDto.setMultiHop(multiHop);
+    flightSearchDto.setSortBy(sortBy);
     LOGGER.info("Getting flights with certain criteria= " + flightSearchDto);
-    var airports = service.getFlightByCriteria(flightSearchDto);
-    if (airports.isEmpty()){
+    var flights = service.getFlightByCriteria(flightSearchDto);
+    if (flights.isEmpty()){
       return ResponseEntity.noContent().build();
     }
-    return ResponseEntity.ok(Map.of("Hello", null));
-    //return ResponseEntity.ok(airports);
+    return ResponseEntity.ok(flights);
   }
 
   @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
