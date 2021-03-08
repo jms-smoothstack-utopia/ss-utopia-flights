@@ -3,6 +3,8 @@ package com.ss.utopia.flights.controller;
 import com.ss.utopia.flights.dto.airport.CreateAirportDto;
 import com.ss.utopia.flights.dto.airport.UpdateAirportDto;
 import com.ss.utopia.flights.entity.airport.Airport;
+import com.ss.utopia.flights.security.permissions.AdminOnlyPermission;
+import com.ss.utopia.flights.security.permissions.EmployeeOnlyPermission;
 import com.ss.utopia.flights.service.AirportService;
 import java.net.URI;
 import java.util.List;
@@ -51,7 +53,7 @@ public class AirportsController {
     return ResponseEntity.of(Optional.ofNullable(service.getAirportById(id)));
   }
 
-
+  @EmployeeOnlyPermission
   @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
   public ResponseEntity<Airport> createNewAirport(@Valid @RequestBody CreateAirportDto createAirportDto) {
     log.info("POST Airport");
@@ -60,6 +62,7 @@ public class AirportsController {
     return ResponseEntity.created(uri).body(airport);
   }
 
+  @EmployeeOnlyPermission
   @PutMapping(value = "/{id}", consumes = {MediaType.APPLICATION_JSON_VALUE,
       MediaType.APPLICATION_XML_VALUE})
   public ResponseEntity<?> updateAirport(@PathVariable String id,
@@ -69,6 +72,7 @@ public class AirportsController {
     return ResponseEntity.noContent().build();
   }
 
+  @AdminOnlyPermission
   @DeleteMapping("/{id}")
   public ResponseEntity<?> deleteAirport(@PathVariable String id) {
     log.info("DELETE Airport id=" + id);
