@@ -1,6 +1,7 @@
 package com.ss.utopia.flights.bootstrap;
 
 
+import com.ss.utopia.flights.dto.flight.CreateFlightDto;
 import com.ss.utopia.flights.entity.airplane.Airplane;
 import com.ss.utopia.flights.entity.airplane.SeatConfiguration;
 import com.ss.utopia.flights.entity.airport.Airport;
@@ -58,89 +59,136 @@ public class H2DataBootstrap implements CommandLineRunner {
 
         LocalDateTime departure = LocalDateTime.of(2021, 5, 17, 12, 10);
         LocalDateTime arrival = LocalDateTime.of(2021, 5, 17, 16,0);
-        Flight firstFlight = Flight.builder()
-                .possibleLoyaltyPoints(50)
-                .flightActive(true)
-                .origin(airportRepository.findById("IAD").get())
-                .destination(airportRepository.findById("LAX").get())
-                .airplane(airplaneRepository.findAll().get(0))
+
+        CreateFlightDto firstFlightDto = CreateFlightDto.builder()
+                .originId("IAD")
+                .destinationId("LAX")
+                .airplaneId(1L)
                 .approximateDateTimeStart(ZonedDateTime.of(departure, ZoneId.of("EST", ZoneId.SHORT_IDS)))
                 .approximateDateTimeEnd(ZonedDateTime.of(arrival, ZoneId.of("EST", ZoneId.SHORT_IDS)))
                 .build();
-        flightRepository.save(firstFlight);
+        flightService.createNewFlight(firstFlightDto);
+
+        LocalDateTime anotherArrival = LocalDateTime.of(2021, 5, 17, 12, 20);
+        LocalDateTime anotherDeparture = LocalDateTime.of(2021, 5, 17, 16,0);
+        CreateFlightDto anotherFlight = CreateFlightDto.builder()
+                .originId("DCA")
+                .destinationId("LAX")
+                .airplaneId(1L)
+                .approximateDateTimeStart(ZonedDateTime.of(anotherArrival, ZoneId.of("EST", ZoneId.SHORT_IDS)))
+                .approximateDateTimeEnd(ZonedDateTime.of(anotherDeparture, ZoneId.of("EST", ZoneId.SHORT_IDS)))
+                .build();
+        flightService.createNewFlight(anotherFlight);
+
+        LocalDateTime multiHopJFKDeparture = LocalDateTime.of(2021, 5, 17, 17, 20);
+        LocalDateTime multiHopJFKArrival = LocalDateTime.of(2021, 5, 17, 21,0);
+        CreateFlightDto multihopJFKFlight = CreateFlightDto.builder()
+                .originId("DCA")
+                .destinationId("JFK")
+                .airplaneId(1L)
+                .approximateDateTimeStart(ZonedDateTime.of(multiHopJFKDeparture, ZoneId.of("EST", ZoneId.SHORT_IDS)))
+                .approximateDateTimeEnd(ZonedDateTime.of(multiHopJFKArrival, ZoneId.of("EST", ZoneId.SHORT_IDS)))
+                .build();
+        flightService.createNewFlight(multihopJFKFlight);
+
+        LocalDateTime multiHopSFODeparture = LocalDateTime.of(2021, 5, 17, 17, 20);
+        LocalDateTime multiHopSFOArrival = LocalDateTime.of(2021, 5, 17, 21,0);
+        CreateFlightDto multihopSFOFlight = CreateFlightDto.builder()
+                .originId("DCA")
+                .destinationId("SFO")
+                .airplaneId(1L)
+                .approximateDateTimeStart(ZonedDateTime.of(multiHopSFODeparture, ZoneId.of("EST", ZoneId.SHORT_IDS)))
+                .approximateDateTimeEnd(ZonedDateTime.of(multiHopSFOArrival, ZoneId.of("EST", ZoneId.SHORT_IDS)))
+                .build();
+        flightService.createNewFlight(multihopSFOFlight);
+
+        LocalDateTime multiHopSFOLAXDeparture = LocalDateTime.of(2021, 5, 17, 22, 20);
+        LocalDateTime multiHopSFOLAXArrival = LocalDateTime.of(2021, 5, 18, 2,0);
+        CreateFlightDto multihopSFOLAXFlight = CreateFlightDto.builder()
+                .originId("SFO")
+                .destinationId("LAX")
+                .airplaneId(1L)
+                .approximateDateTimeStart(ZonedDateTime.of(multiHopSFOLAXDeparture, ZoneId.of("EST", ZoneId.SHORT_IDS)))
+                .approximateDateTimeEnd(ZonedDateTime.of(multiHopSFOLAXArrival, ZoneId.of("EST", ZoneId.SHORT_IDS)))
+                .build();
+        flightService.createNewFlight(multihopSFOLAXFlight);
+
+        LocalDateTime multiHopLAXDeparture = LocalDateTime.of(2021, 5, 17, 22, 20);
+        LocalDateTime multiHopLAXArrival = LocalDateTime.of(2021, 5, 18, 2,0);
+        CreateFlightDto multihopLAXFlight = CreateFlightDto.builder()
+                .originId("JFK")
+                .destinationId("LAX")
+                .airplaneId(1L)
+                .approximateDateTimeStart(ZonedDateTime.of(multiHopLAXDeparture, ZoneId.of("EST", ZoneId.SHORT_IDS)))
+                .approximateDateTimeEnd(ZonedDateTime.of(multiHopLAXArrival, ZoneId.of("EST", ZoneId.SHORT_IDS)))
+                .build();
+        flightService.createNewFlight(multihopLAXFlight);
+
+        LocalDateTime multiHopJFKSFODeparture = LocalDateTime.of(2021, 5, 17, 22, 20);
+        LocalDateTime multiHopJFKSFOArrival = LocalDateTime.of(2021, 5, 18, 2,0);
+        CreateFlightDto multihopKFJSFOFlight = CreateFlightDto.builder()
+                .originId("JFK")
+                .destinationId("SFO")
+                .airplaneId(1L)
+                .approximateDateTimeStart(ZonedDateTime.of(multiHopJFKSFODeparture, ZoneId.of("EST", ZoneId.SHORT_IDS)))
+                .approximateDateTimeEnd(ZonedDateTime.of(multiHopJFKSFOArrival, ZoneId.of("EST", ZoneId.SHORT_IDS)))
+                .build();
+        flightService.createNewFlight(multihopKFJSFOFlight);
+
+        LocalDateTime multiHopSFOLAXDeparture1 = LocalDateTime.of(2021, 5, 18, 5, 20);
+        LocalDateTime multiHopSFOLAXArrival1 = LocalDateTime.of(2021, 5, 18, 7,0);
+        CreateFlightDto multihopSFOLAXFlight1 = CreateFlightDto.builder()
+                .originId("SFO")
+                .destinationId("LAX")
+                .airplaneId(1L)
+                .approximateDateTimeStart(ZonedDateTime.of(multiHopSFOLAXDeparture1, ZoneId.of("EST", ZoneId.SHORT_IDS)))
+                .approximateDateTimeEnd(ZonedDateTime.of(multiHopSFOLAXArrival1, ZoneId.of("EST", ZoneId.SHORT_IDS)))
+                .build();
+        flightService.createNewFlight(multihopSFOLAXFlight1);
 
         LocalDateTime departure1 = LocalDateTime.of(2021, 4, 15, 12, 20);
         LocalDateTime arrival1 = LocalDateTime.of(2021, 4, 15, 16,0);
-        Flight secondFlight = Flight.builder()
-                .possibleLoyaltyPoints(75)
-                .flightActive(true)
-                .origin(airportRepository.findById("LAX").get())
-                .destination(airportRepository.findById("IAD").get())
-                .airplane(airplaneRepository.findAll().get(0))
+        CreateFlightDto secondFlight = CreateFlightDto.builder()
+                .originId("LAX")
+                .destinationId("IAD")
+                .airplaneId(1L)
                 .approximateDateTimeStart(ZonedDateTime.of(departure1, ZoneId.of("EST", ZoneId.SHORT_IDS)))
                 .approximateDateTimeEnd(ZonedDateTime.of(arrival1, ZoneId.of("EST", ZoneId.SHORT_IDS)))
                 .build();
-        flightRepository.save(secondFlight);
+        flightService.createNewFlight(secondFlight);
 
-        LocalDateTime departure2 = LocalDateTime.of(2021, 3, 3, 10, 15);
-        LocalDateTime arrival2 = LocalDateTime.of(2021, 3, 3, 14,30);
-        Flight thirdFlight = Flight.builder()
-                .possibleLoyaltyPoints(15)
-                .flightActive(true)
-                .origin(airportRepository.findById("IAD").get())
-                .destination(airportRepository.findById("JFK").get())
-                .airplane(airplaneRepository.findAll().get(1))
+        LocalDateTime departure2 = LocalDateTime.of(2021, 4, 3, 10, 15);
+        LocalDateTime arrival2 = LocalDateTime.of(2021, 4, 3, 14,30);
+        CreateFlightDto thirdFlight = CreateFlightDto.builder()
+                .originId("IAD")
+                .destinationId("JFK")
+                .airplaneId(1L)
                 .approximateDateTimeStart(ZonedDateTime.of(departure2, ZoneId.of("EST", ZoneId.SHORT_IDS)))
                 .approximateDateTimeEnd(ZonedDateTime.of(arrival2, ZoneId.of("EST", ZoneId.SHORT_IDS)))
                 .build();
-        flightRepository.save(thirdFlight);
+        flightService.createNewFlight(thirdFlight);
 
         LocalDateTime departure3 = LocalDateTime.of(2021, 3, 4, 10, 15);
         LocalDateTime arrival3 = LocalDateTime.of(2021, 3, 4, 14,30);
-        Flight fourthFlight = Flight.builder()
-                .possibleLoyaltyPoints(25)
-                .flightActive(true)
-                .origin(airportRepository.findById("JFK").get())
-                .destination(airportRepository.findById("LAX").get())
-                .airplane(airplaneRepository.findAll().get(1))
+        CreateFlightDto fourthFlight = CreateFlightDto.builder()
+                .originId("JFK")
+                .destinationId("LAX")
+                .airplaneId(1L)
                 .approximateDateTimeStart(ZonedDateTime.of(departure3, ZoneId.of("EST", ZoneId.SHORT_IDS)))
                 .approximateDateTimeEnd(ZonedDateTime.of(arrival3, ZoneId.of("EST", ZoneId.SHORT_IDS)))
                 .build();
-        flightRepository.save(fourthFlight);
+        flightService.createNewFlight(fourthFlight);
 
-        //Then adding random data
-
-        var airplaneList = airplaneRepository.findAll();
-        var airportList = airportRepository.findAll();
-
-        var minDate = LocalDate.of(2021, 5, 1);
-        var maxDate = LocalDate.of(2021, 7,31);
-        var minTime = LocalTime.of(0,0);
-        var maxTime = LocalTime.of(23,59);
-        Random generator = new Random();
-        for (int i = 0; i < 50; i++){
-            Airplane randomAirplane = airplaneList.get(generator.nextInt(airplaneList.size()));
-            Airport origin = airportList.get(generator.nextInt(airportList.size()));
-            Airport destination = airportList.get(generator.nextInt(airportList.size()));
-            while (origin.equals(destination)){
-                destination = airportList.get(generator.nextInt(airportList.size()));
-            }
-            Integer randomPoints = generator.nextInt(100);
-            var LocalDateDepart = between(minDate, maxDate);
-            var LocalDateArrival = between(LocalDateDepart, LocalDateDepart.plusDays(1));
-            var LocalTimeDepart = between(minTime, maxTime);
-            var LocalTimeArrival = between(LocalTimeDepart, maxTime);
-            Flight tempFlight = Flight.builder()
-                    .possibleLoyaltyPoints(randomPoints)
-                    .flightActive(true)
-                    .origin(origin)
-                    .destination(destination)
-                    .airplane(randomAirplane)
-                    .approximateDateTimeStart(ZonedDateTime.of(LocalDateDepart, LocalTimeDepart, ZoneId.of("EST", ZoneId.SHORT_IDS)))
-                    .approximateDateTimeEnd(ZonedDateTime.of(LocalDateArrival, LocalTimeArrival, ZoneId.of("EST", ZoneId.SHORT_IDS)))
-                    .build();
-            flightRepository.save(tempFlight);
-        }
+        LocalDateTime departure4 = LocalDateTime.of(2021, 5, 28, 10, 15);
+        LocalDateTime arrival4 = LocalDateTime.of(2021, 5, 28, 14,30);
+        CreateFlightDto fifthFlight = CreateFlightDto.builder()
+                .originId("LAX")
+                .destinationId("IAD")
+                .airplaneId(1L)
+                .approximateDateTimeStart(ZonedDateTime.of(departure4, ZoneId.of("EST", ZoneId.SHORT_IDS)))
+                .approximateDateTimeEnd(ZonedDateTime.of(arrival4, ZoneId.of("EST", ZoneId.SHORT_IDS)))
+                .build();
+        flightService.createNewFlight(fifthFlight);
     }
 
     private void loadAirplanes() {
@@ -241,23 +289,5 @@ public class H2DataBootstrap implements CommandLineRunner {
                     .build();
             servicingAreaRepository.save(tempArea);
         }
-    }
-
-    private static LocalDate between(LocalDate startInclusive, LocalDate endExclusive){
-        long startEpochDay = startInclusive.toEpochDay();
-        long endEpochDay = endExclusive.toEpochDay();
-        long randomDay = ThreadLocalRandom.current()
-                .nextLong(startEpochDay, endEpochDay);
-        return LocalDate.ofEpochDay(randomDay);
-    }
-
-    public static LocalTime between(LocalTime startTime, LocalTime endTime) {
-        int startSeconds = startTime.toSecondOfDay();
-        int endSeconds = endTime.toSecondOfDay();
-        int randomTime = ThreadLocalRandom
-                .current()
-                .nextInt(startSeconds, endSeconds);
-
-        return LocalTime.ofSecondOfDay(randomTime);
     }
 }

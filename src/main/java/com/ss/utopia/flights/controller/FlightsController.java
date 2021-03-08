@@ -55,9 +55,9 @@ public class FlightsController {
           @RequestParam(name = "origin") String[] origins,
           @RequestParam(name = "destinations")String[] destinations,
           @RequestParam(name = "departure") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate departureDate,
-          @RequestParam(name = "return", required = false) Optional<LocalDate> returnDate,
-          @RequestParam(name = "numberOfPassengers", required = false) Optional<Integer> numberOfPassengers,
-          @RequestParam(value = "multiHop", required = false, defaultValue = "false")Boolean multiHop,
+          @RequestParam(name = "return", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Optional<LocalDate> returnDate,
+          @RequestParam(name = "passengercount", required = false) Optional<Integer> numberOfPassengers,
+          @RequestParam(value = "multihop", required = false, defaultValue = "false")Boolean multiHop,
           @RequestParam(value = "sort", required = false, defaultValue = "expensive")String sortBy
           )
           //Change to Flight Query Parameters

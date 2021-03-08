@@ -10,10 +10,7 @@ import com.ss.utopia.flights.entity.flight.Seat;
 import com.ss.utopia.flights.entity.flight.SeatStatus;
 import com.ss.utopia.flights.exception.NoSuchAirportException;
 import com.ss.utopia.flights.exception.NoSuchFlightException;
-import com.ss.utopia.flights.repository.AirplaneRepository;
-import com.ss.utopia.flights.repository.AirportRepository;
-import com.ss.utopia.flights.repository.FlightRepository;
-import com.ss.utopia.flights.repository.ServicingAreaRepository;
+import com.ss.utopia.flights.repository.*;
 import com.ss.utopia.flights.util.FindAllPaths;
 
 import java.math.BigDecimal;
@@ -23,10 +20,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 
 @Service
 @RequiredArgsConstructor
@@ -37,6 +31,7 @@ public class FlightServiceImpl implements FlightService {
     private final AirplaneService airplaneService;
     private final ServicingAreaRepository servicingAreaRepository;
     private final AirportRepository airportRepository;
+    private final SeatRepository seatRepository;
 
     @Override
     public List<Flight> getAllFlights() {
@@ -63,10 +58,28 @@ public class FlightServiceImpl implements FlightService {
         var destination = airportService.getAirportById(createFlightDto.getDestinationId());
         var airplane = airplaneService.getAirplaneById(createFlightDto.getAirplaneId());
 
+        Integer loyaltyPoints;
+        if (createFlightDto.getLoyaltyPoints() == null){
+            loyaltyPoints = 50;
+        }
+        else{
+            loyaltyPoints = createFlightDto.getLoyaltyPoints();
+        }
+
+        BigDecimal basePrice;
+        if (createFlightDto.getBaseSeatPrice() == null){
+            basePrice = BigDecimal.valueOf(50.00);
+        }
+        else{
+            basePrice = createFlightDto.getBaseSeatPrice();
+        }
+
         var flight = Flight.builder()
                 .origin(origin)
                 .destination(destination)
                 .airplane(airplane)
+                .possibleLoyaltyPoints(loyaltyPoints)
+                .flightActive(true)
                 .approximateDateTimeStart(createFlightDto.getApproximateDateTimeStart())
                 .approximateDateTimeEnd(createFlightDto.getApproximateDateTimeEnd())
                 .build();
@@ -80,22 +93,24 @@ public class FlightServiceImpl implements FlightService {
         airplane.getSeatConfigurations()
                 .forEach(config -> {
                     for (int row = 0; row < config.getNumRows(); row++) {
-                        for (char col = 'A'; col < config.getNumSeatsPerRow(); col++) {
+                        for (int col = 0; col < config.getNumSeatsPerRow(); col++) {
+                            char baseLetter = 'A';
+                            char CorrectLetter = (char) (baseLetter + col);
                             var seat = Seat.builder()
-                                    .id(String.format("%d-%d%c", flightId, row, col))
+                                    .id(String.format("FLIGHT %d-%d%c %s", flightId, row + 1, CorrectLetter, config.getSeatClass()))
                                     .seatRow(row + 1)
-                                    .seatColumn(col)
+                                    .seatColumn(CorrectLetter)
                                     .seatClass(config.getSeatClass())
                                     .seatStatus(SeatStatus.AVAILABLE)
-                                    .price(createFlightDto.getBaseSeatPrice())
+                                    .price(basePrice)
                                     .build();
+                            seatRepository.save(seat);
                             seats.add(seat);
                         }
                     }
                 });
 
         flight.setSeats(seats);
-
         return repository.save(flight);
     }
 
@@ -147,47 +162,6 @@ public class FlightServiceImpl implements FlightService {
         repository.save(flight);
     }
 
-//
-//
-//  //I will need to implement this later for multihop
-//  private Map<String, List<List<Flight>>> getMultiHopFlightByCriteria(FlightSearchDto flightSearchDto) {
-//    List<String> startingAirports = returnListOfAirportsInRegardsToSearchCriteria(
-//        flightSearchDto.getStartingServicingArea(), flightSearchDto.getStartingServicingAirports());
-//    List<String> destinationAirports = returnListOfAirportsInRegardsToSearchCriteria(
-//        flightSearchDto.getDestinationServicingArea(), flightSearchDto.getDestinationServicingAirports());
-//    List<List<Flight>> multiHop = findMultiHopFlightsBetweenLists(startingAirports, destinationAirports);
-//    assert multiHop != null;
-//    return Map.of("Origin to destination", multiHop);
-//  }
-
-//  private List<List<Flight>> findMultiHopFlightsBetweenLists(List<String> starts, List<String> destinations) {
-//    if (starts.isEmpty() || destinations.isEmpty())
-//    {
-//      return null;
-//    }
-//    List<List<Flight>> emptyList = new ArrayList<>() {};
-//    for(String i: starts){
-//      for(String j: destinations){
-//        Airport origin = airportService.getAirportById(i);
-//        Airport destination = airportService.getAirportById(j);
-//        var values = addMultiHopFlights(origin, destination);
-//        System.out.println(values);
-//      }
-//    }
-//    return emptyList;
-//  }
-
-//  private List<Flight> addMultiHopFlights(Airport origin, Airport destination){
-//    List<Flight> availableFlights = getAllActiveFlights().stream().filter(e -> e.getOrigin() == origin || e.getDestination() == destination).collect(Collectors.toList());
-//    if (availableFlights.isEmpty()){
-//      return Collections.emptyList();
-//    }
-//    FindAllPaths findAllPaths = new FindAllPaths(origin, destination, availableFlights);
-//    List<List<Airport>> paths = findAllPaths.getAllPaths();
-//    System.out.println(paths);
-//    return availableFlights;
-//  }
-
     @Override
     public Map<String, ?> getFlightByCriteria(FlightSearchDto flightSearchDto) {
 
@@ -218,60 +192,18 @@ public class FlightServiceImpl implements FlightService {
 
     private Map<String,?> findMultiHopFlightsBasedOnCriteria(List<Airport> originAirports, List<Airport> destinationAirports, LocalDate departureDate, Optional<LocalDate> returnDate, Integer numberOfPassengers) {
         List<Flight> availableFlights = getAllActiveFlights();
-        var flightTracker = new ArrayList<>(Collections.emptyList());
-        for(Airport i: originAirports){
-            for(Airport j: destinationAirports){
-                List<List<Flight>> tempList = getMultiHopFlightsBetweenAirports(i, j, numberOfPassengers, availableFlights, departureDate);
-                if (tempList != null){
-                    flightTracker.add(tempList);
-                }
-            }
+        List<List<Flight>> departFlights = getMultiHopFlightsBetweenAirports(originAirports, destinationAirports, numberOfPassengers, availableFlights, departureDate);
+        if (returnDate.isPresent()){
+            List<List<Flight>> returnFlights = getMultiHopFlightsBetweenAirports(destinationAirports, originAirports, numberOfPassengers, availableFlights, returnDate.get());
+            return Map.of("Origin to destination", departFlights, "Destination to origin", returnFlights);
         }
-
-        if (flightTracker.isEmpty()){
-            return null;
-        }
-        return Map.of("Origin to Destination", flightTracker);
+        return Map.of("Origin to destination", departFlights);
     }
 
-    private List<List<Flight>> getMultiHopFlightsBetweenAirports(Airport origin, Airport destination, Integer numberOfPassengers, List<Flight> availableFlights, LocalDate departureDate) {
-        FindAllPaths findAllPaths = new FindAllPaths(origin, destination, availableFlights);
-        List<List<Airport>> pathsFromAirports = findAllPaths.getAllPaths();
-
-        if (pathsFromAirports.isEmpty() || pathsFromAirports.size() == 1){
-            return null;
-        }
-
-        List<List<Flight>> returnList = new ArrayList<>(Collections.emptyList());
-        //Now I need to map between airports and flights
-        for(int i = 0; i < pathsFromAirports.size(); i++){
-            var tempPlan = pathsFromAirports.get(i);
-            var airportLeave = departureDate;
-            for(int j = 0; j < tempPlan.size(); j++){
-
-                //We do not need to check the last element
-                //We are at the destination
-                if (j == tempPlan.size() - 1){
-                    break;
-                }
-
-                var tempFlightPlan = findNonStopFlightsBetweenLists(List.of(tempPlan.get(j)), List.of(tempPlan.get(j + 1)), airportLeave, numberOfPassengers);
-
-                if (tempFlightPlan.isEmpty()){
-                    break;
-                }
-
-                var sortListFlights = tempFlightPlan.stream()
-                        .sorted(Comparator.comparing(Flight::getApproximateDateTimeStart))
-                        .collect(Collectors.toList());
-
-                airportLeave = sortListFlights.get(0).getApproximateDateTimeEnd().toLocalDate();
-
-                returnList.add(sortListFlights);
-            }
-        }
-
-        return returnList;
+    private List<List<Flight>> getMultiHopFlightsBetweenAirports(List<Airport> origin, List<Airport> destination, Integer numberOfPassengers, List<Flight> availableFlights, LocalDate departureDate) {
+        FindAllPaths findAllPaths = new FindAllPaths(origin, destination, availableFlights, numberOfPassengers, departureDate);
+        findAllPaths.getAllPaths();
+        return findAllPaths.returnAllValidFlights();
     }
 
     private Map<String, List<Flight>> findNonStopFlightsBasedOnCriteria(List<Airport> originAirports, List<Airport> destinationAirports, LocalDate departureDate, Optional<LocalDate> returnDate, Integer passengerCount) {
@@ -279,7 +211,6 @@ public class FlightServiceImpl implements FlightService {
         var setOfFlights = new java.util.HashMap<>(Collections.<String, List<Flight>>emptyMap());
         setOfFlights.put("Origin to Destination", flightsWithCriteria);
 
-        //If its present, then user wants round trip
         if (returnDate.isPresent()) {
             List<Flight> returnFlightsWithCriteria = findNonStopFlightsBetweenLists(destinationAirports, originAirports, returnDate.get(), passengerCount);
             setOfFlights.put("Destination to Origin", returnFlightsWithCriteria);
@@ -310,23 +241,6 @@ public class FlightServiceImpl implements FlightService {
     }
 
     private List<Flight> findNonStopFlightsBetweenLists(List<Airport> origins, List<Airport> destinations, LocalDate departureDate, Integer passengerCount) {
-
-        System.out.println("This is the passenger count: " + passengerCount);
-
-        System.out.println("These are available seats for the first flight in database: " + getAvailableSeats(getAllActiveFlights().get(0).getId()));
-
-        var firstFilter = getAllActiveFlights().stream()
-                .filter(flight -> origins.contains(flight.getOrigin()) && destinations.contains(flight.getDestination()))
-                .collect(Collectors.toList());
-
-        System.out.println(firstFilter);
-
-        var secondFilter = firstFilter.stream()
-                .filter(flight -> flight.getApproximateDateTimeStart().toLocalDate().equals(departureDate))
-                .collect(Collectors.toList());
-
-        System.out.println(secondFilter);
-
         return getAllActiveFlights().stream()
                 .filter(flight -> origins.contains(flight.getOrigin()) && destinations.contains(flight.getDestination()))
                 .filter(flight -> flight.getApproximateDateTimeStart().toLocalDate().equals(departureDate))

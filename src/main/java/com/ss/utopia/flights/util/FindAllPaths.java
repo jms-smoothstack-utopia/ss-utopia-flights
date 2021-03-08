@@ -2,79 +2,90 @@ package com.ss.utopia.flights.util;
 
 import com.ss.utopia.flights.entity.airport.Airport;
 import com.ss.utopia.flights.entity.flight.Flight;
+import com.ss.utopia.flights.entity.flight.Seat;
+import com.ss.utopia.flights.entity.flight.SeatStatus;
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 public class FindAllPaths {
 
-  private final Airport origin;
-  private final Airport destination;
-  private Map<Airport, List<Airport>> adjList;
-  private final List<List<Airport>> airportPaths;
+  private final List<Airport> origin;
+  private final List<Airport> destination;
+  private final List<Flight> availableFlights;
+  private final Integer passengerCount;
+  private final LocalDate departureDate;
+  public List<List<Flight>> allCorrespondingFlights;
 
-  public FindAllPaths(Airport origin, Airport destination, List<Flight> listOfFlights){
+  public FindAllPaths(List<Airport> origin, List<Airport> destination, List<Flight> listOfFlights, Integer numberOfPassengers, LocalDate departureDate){
     this.origin = origin;
     this.destination = destination;
-    this.airportPaths = new ArrayList<>();
-    buildGraph(listOfFlights);
+    this.availableFlights = listOfFlights;
+    this.passengerCount = numberOfPassengers;
+    this.departureDate = departureDate;
+    this.allCorrespondingFlights = new ArrayList<>();
   }
 
-  private void buildGraph(List<Flight> flights){
-    this.adjList = new HashMap<>();
-    for(Flight i: flights){
-      //The key is a
-      Airport a = i.getOrigin();
-
-      //This will be included in List<Airport>
-      Airport b = i.getDestination();
-
-      var tempVal = this.adjList.get(a);
-      if (tempVal == null){
-        adjList.put(a, List.of(b));
+  public void getAllPaths(){
+    List<Airport> airportsVisited = new ArrayList<>();
+    ArrayList<Flight> currentPath = new ArrayList<>();
+    for(Airport i: this.origin){
+      List<Flight> flightsThatStartAtOrigin = this.availableFlights.stream()
+              .filter(flight -> flight.getOrigin() == i)
+              .filter(flight -> flight.getApproximateDateTimeStart().toLocalDate().equals(departureDate))
+              .filter(flight -> getAvailableSeats(flight).size() >= this.passengerCount)
+              .collect(Collectors.toList());
+      airportsVisited.add(i);
+      for(Flight j: flightsThatStartAtOrigin){
+        currentPath.add(j);
+        dfs(currentPath, airportsVisited);
+        currentPath.remove(j);
       }
-      else {
-        if (!tempVal.contains(b)){
-          tempVal.add(b);
-          adjList.replace(a, tempVal);
-        }
-      }
+      airportsVisited.remove(i);
     }
   }
 
-  public List<List<Airport>> getAllPaths(){
-    Map<Airport, Boolean> beingVisited = new HashMap<>();
-    ArrayList<Airport> currentPath = new ArrayList<>();
-    currentPath.add(this.origin);
-    dfs(this.origin, this.destination, beingVisited, currentPath);
-    return this.airportPaths;
+  public List<List<Flight>> returnAllValidFlights(){
+    return this.allCorrespondingFlights;
   }
 
-  private void dfs(Airport origin, Airport destination, Map<Airport, Boolean> beingVisited, ArrayList<Airport> currentPath) {
+  private List<Seat> getAvailableSeats(Flight flight) {
+    return flight.getSeats().stream()
+            .filter(x -> x.getSeatStatus() == SeatStatus.AVAILABLE)
+            .collect(Collectors.toList());
+  }
 
-    if (beingVisited.get(origin) == null){
-      beingVisited.put(origin, true);
-    }
-    else{
-      beingVisited.replace(origin, true);
-    }
+  private void dfs(ArrayList<Flight> currentPath, List<Airport> airportsVisited) {
+    Flight lastFlight = currentPath.get(currentPath.size() - 1);
 
-    if (origin.equals(destination)){
-      this.airportPaths.add(currentPath);
+    if (this.destination.contains(lastFlight.getDestination())){
+      this.allCorrespondingFlights.add(new ArrayList<>(currentPath));
       return;
     }
 
-    var tempVal = this.adjList.get(origin);
-    for(Airport i: tempVal)
-    {
-      if(beingVisited.get(i) == null || !beingVisited.get(i))
-      {
-        currentPath.add(i);
-        dfs(i, destination, beingVisited, currentPath);
-        currentPath.remove(i);
-      }
+    var flightEndingTime = lastFlight.getApproximateDateTimeEnd().toLocalDateTime();
+
+    //Make sure we do not go to the same airport twice
+    airportsVisited.add(lastFlight.getDestination());
+
+    List<Flight> validFlightsFromThisAirport = this.availableFlights.stream()
+            .filter(flight -> flight.getOrigin() == lastFlight.getDestination())
+            .filter(flight -> !airportsVisited.contains(flight.getDestination()))
+            .filter(flight -> flight.getApproximateDateTimeStart().toLocalDateTime().isAfter(flightEndingTime) && flight.getApproximateDateTimeStart().toLocalDateTime().isBefore(flightEndingTime.plusHours(8)))
+            .filter(flight -> getAvailableSeats(flight).size() >= this.passengerCount)
+            .collect(Collectors.toList());
+
+    if (validFlightsFromThisAirport.isEmpty()){
+      return;
     }
-    beingVisited.replace(origin, false);
+
+    for(Flight i: validFlightsFromThisAirport){
+      currentPath.add(i);
+      dfs(currentPath, airportsVisited);
+      currentPath.remove(i);
+    }
+
+    airportsVisited.remove(lastFlight.getDestination());
   }
 }

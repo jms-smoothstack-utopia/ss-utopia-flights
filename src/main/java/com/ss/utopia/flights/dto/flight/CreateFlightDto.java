@@ -34,4 +34,6 @@ public class CreateFlightDto {
   @NotNull
   @Min(value = 0)
   private BigDecimal baseSeatPrice;
+
+  private Integer loyaltyPoints;
 }
