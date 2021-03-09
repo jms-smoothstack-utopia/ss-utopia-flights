@@ -31,7 +31,7 @@ public class FindAllPaths {
     List<Airport> airportsVisited = new ArrayList<>();
     ArrayList<Flight> currentPath = new ArrayList<>();
     for(Airport i: this.origin){
-      List<Flight> flightsThatStartAtOrigin = this.availableFlights.stream()
+      List<Flight> flightsThatStartAtOrigin = this.availableFlights.stream().parallel()
               .filter(flight -> flight.getOrigin() == i)
               .filter(flight -> flight.getApproximateDateTimeStart().toLocalDate().equals(departureDate))
               .filter(flight -> getAvailableSeats(flight).size() >= this.passengerCount)
@@ -69,7 +69,7 @@ public class FindAllPaths {
     //Make sure we do not go to the same airport twice
     airportsVisited.add(lastFlight.getDestination());
 
-    List<Flight> validFlightsFromThisAirport = this.availableFlights.stream()
+    List<Flight> validFlightsFromThisAirport = this.availableFlights.stream().parallel()
             .filter(flight -> flight.getOrigin() == lastFlight.getDestination())
             .filter(flight -> !airportsVisited.contains(flight.getDestination()))
             .filter(flight -> flight.getApproximateDateTimeStart().toLocalDateTime().isAfter(flightEndingTime) && flight.getApproximateDateTimeStart().toLocalDateTime().isBefore(flightEndingTime.plusHours(8)))

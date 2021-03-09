@@ -6,7 +6,6 @@ import com.ss.utopia.flights.entity.airplane.Airplane;
 import com.ss.utopia.flights.entity.airplane.SeatConfiguration;
 import com.ss.utopia.flights.entity.airport.Airport;
 import com.ss.utopia.flights.entity.airport.ServicingArea;
-import com.ss.utopia.flights.entity.flight.Flight;
 import com.ss.utopia.flights.entity.shared.SeatClass;
 import com.ss.utopia.flights.repository.AirplaneRepository;
 import com.ss.utopia.flights.repository.AirportRepository;
@@ -21,8 +20,6 @@ import org.springframework.stereotype.Component;
 
 import java.time.*;
 import java.util.List;
-import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
 
 @Component
 @Slf4j
@@ -37,7 +34,7 @@ public class H2DataBootstrap implements CommandLineRunner {
     private final ServicingAreaRepository servicingAreaRepository;
 
     @Override
-    public void run(String... args) throws Exception {
+    public void run(String... args) {
         log.info("Running in H2, adding new items");
         if (airplaneRepository.count() == 0 || airportRepository.count() == 0 || flightRepository.count() == 0 || servicingAreaRepository.count() == 0){
             log.info("Now, populating h2");
@@ -219,13 +216,14 @@ public class H2DataBootstrap implements CommandLineRunner {
     }
 
     private void loadAirports() {
+
         Airport Dulles = Airport.builder()
                 .iataId("IAD")
                 .name("Dulles International Airport")
                 .streetAddress("1 Saarinen Cir")
                 .city("Dulles")
                 .state("VA")
-                .servicingArea(servicingAreaRepository.findByServicingArea("D.C").get())
+                .servicingArea(servicingAreaRepository.findByServicingArea("D.C").orElseThrow())
                 .zipcode("20166")
                 .build();
         airportRepository.save(Dulles);
@@ -235,7 +233,7 @@ public class H2DataBootstrap implements CommandLineRunner {
                 .streetAddress("2401 Smith Blvd")
                 .city("Arlington")
                 .state("VA")
-                .servicingArea(servicingAreaRepository.findByServicingArea("D.C").get())
+                .servicingArea(servicingAreaRepository.findByServicingArea("D.C").orElseThrow())
                 .zipcode("22202")
                 .build();
         airportRepository.save(Reagan);
@@ -245,7 +243,7 @@ public class H2DataBootstrap implements CommandLineRunner {
                 .streetAddress("Baltimore")
                 .city("Baltimore")
                 .state("MD")
-                .servicingArea(servicingAreaRepository.findByServicingArea("D.C").get())
+                .servicingArea(servicingAreaRepository.findByServicingArea("D.C").orElseThrow())
                 .zipcode("21240")
                 .build();
         airportRepository.save(Baltimore);
@@ -255,7 +253,7 @@ public class H2DataBootstrap implements CommandLineRunner {
                 .streetAddress("Queens")
                 .city("Queens")
                 .state("NY")
-                .servicingArea(servicingAreaRepository.findByServicingArea("NYC").get())
+                .servicingArea(servicingAreaRepository.findByServicingArea("NYC").orElseThrow())
                 .zipcode("11430")
                 .build();
         airportRepository.save(JFK);
@@ -265,7 +263,7 @@ public class H2DataBootstrap implements CommandLineRunner {
                 .streetAddress("1 World Way")
                 .city("Los Angeles")
                 .state("CA")
-                .servicingArea(servicingAreaRepository.findByServicingArea("LA").get())
+                .servicingArea(servicingAreaRepository.findByServicingArea("LA").orElseThrow())
                 .zipcode("90045")
                 .build();
         airportRepository.save(LAX);
@@ -275,7 +273,7 @@ public class H2DataBootstrap implements CommandLineRunner {
                 .streetAddress("San Francisco")
                 .city("San Francisco")
                 .state("CA")
-                .servicingArea(servicingAreaRepository.findByServicingArea("SF").get())
+                .servicingArea(servicingAreaRepository.findByServicingArea("SF").orElseThrow())
                 .zipcode("94128")
                 .build();
         airportRepository.save(SanFran);

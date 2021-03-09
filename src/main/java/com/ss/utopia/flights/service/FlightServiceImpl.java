@@ -40,7 +40,7 @@ public class FlightServiceImpl implements FlightService {
 
     private List<Flight> getAllActiveFlights() {
         ZonedDateTime machineTime = ZonedDateTime.now();
-        return repository.findAll().stream()
+        return repository.findAll().stream().parallel()
                 .filter(flight -> flight.getApproximateDateTimeStart().isAfter(machineTime) &&
                         flight.isFlightActive())
                 .collect(Collectors.toList());
@@ -137,7 +137,7 @@ public class FlightServiceImpl implements FlightService {
     }
 
     public List<Seat> getAvailableSeats(Long flightId){
-        return getFlightSeats(flightId).stream()
+        return getFlightSeats(flightId).stream().parallel()
                 .filter(seats -> seats.getSeatStatus() == SeatStatus.AVAILABLE)
                 .collect(Collectors.toList());
     }
@@ -241,7 +241,7 @@ public class FlightServiceImpl implements FlightService {
     }
 
     private List<Flight> findNonStopFlightsBetweenLists(List<Airport> origins, List<Airport> destinations, LocalDate departureDate, Integer passengerCount) {
-        return getAllActiveFlights().stream()
+        return getAllActiveFlights().stream().parallel()
                 .filter(flight -> origins.contains(flight.getOrigin()) && destinations.contains(flight.getDestination()))
                 .filter(flight -> flight.getApproximateDateTimeStart().toLocalDate().equals(departureDate))
                 .filter(flight -> getAvailableSeats(flight.getId()).size() >= passengerCount)
