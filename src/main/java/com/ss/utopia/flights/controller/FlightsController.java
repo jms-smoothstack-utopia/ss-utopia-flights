@@ -5,6 +5,8 @@ import com.ss.utopia.flights.dto.flight.UpdateFlightDto;
 import com.ss.utopia.flights.dto.flight.UpdateSeatDto;
 import com.ss.utopia.flights.entity.flight.Flight;
 import com.ss.utopia.flights.entity.flight.Seat;
+import com.ss.utopia.flights.security.permissions.AdminOnlyPermission;
+import com.ss.utopia.flights.security.permissions.EmployeeOnlyPermission;
 import com.ss.utopia.flights.service.FlightService;
 import java.net.URI;
 import java.util.List;
@@ -53,6 +55,7 @@ public class FlightsController {
     return ResponseEntity.of(Optional.ofNullable(service.getFlightById(id)));
   }
 
+  @EmployeeOnlyPermission
   @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
   public ResponseEntity<Flight> createNewFlight(@Valid @RequestBody CreateFlightDto airplaneDto) {
     log.info("POST Flight");
@@ -61,6 +64,7 @@ public class FlightsController {
     return ResponseEntity.created(uri).body(flight);
   }
 
+  @EmployeeOnlyPermission
   @PutMapping(value = "/{id}", consumes = {MediaType.APPLICATION_JSON_VALUE,
       MediaType.APPLICATION_XML_VALUE})
   public ResponseEntity<?> updateFlight(@PathVariable Long id,
@@ -72,6 +76,7 @@ public class FlightsController {
     return ResponseEntity.noContent().build();
   }
 
+  @AdminOnlyPermission
   @DeleteMapping("/{id}")
   public ResponseEntity<?> deleteFlight(@PathVariable Long id) {
     log.info("DELETE Flight id=" + id);
@@ -85,6 +90,7 @@ public class FlightsController {
     return ResponseEntity.of(Optional.ofNullable(service.getFlightSeats(flightId)));
   }
 
+  @EmployeeOnlyPermission
   @PutMapping("/{flightId}/seats")
   public ResponseEntity<?> updateSeat(@PathVariable Long flightId,
                                       @Valid @RequestBody Map<String, UpdateSeatDto> seatDtoMap) {
