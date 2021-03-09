@@ -34,6 +34,7 @@ public class AirplanesController {
     this.service = service;
   }
 
+  @EmployeeOnlyPermission
   @GetMapping(produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
   public ResponseEntity<List<Airplane>> getAllAirplanes() {
     log.info("GET Airplane all");
