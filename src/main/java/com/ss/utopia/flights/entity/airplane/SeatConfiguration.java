@@ -25,9 +25,6 @@ public class SeatConfiguration {
   @GeneratedValue(strategy = GenerationType.AUTO)
   private Long id;
 
-  @OneToOne
-  private Airplane airplane;
-
   @Enumerated(EnumType.STRING)
   private SeatClass seatClass;
 

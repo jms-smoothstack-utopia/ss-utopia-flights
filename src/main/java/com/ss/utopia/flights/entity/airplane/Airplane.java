@@ -1,12 +1,7 @@
 package com.ss.utopia.flights.entity.airplane;
 
 import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -31,7 +26,7 @@ public class Airplane {
   @NotBlank
   private String name;
 
-  @OneToMany(cascade = CascadeType.ALL)
+  @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
   @EqualsAndHashCode.Exclude
   @ToString.Exclude
   private List<SeatConfiguration> seatConfigurations;

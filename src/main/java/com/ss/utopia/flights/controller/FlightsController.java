@@ -1,6 +1,7 @@
 package com.ss.utopia.flights.controller;
 
 import com.ss.utopia.flights.dto.flight.CreateFlightDto;
+import com.ss.utopia.flights.dto.flight.FlightSearchDto;
 import com.ss.utopia.flights.dto.flight.UpdateFlightDto;
 import com.ss.utopia.flights.dto.flight.UpdateSeatDto;
 import com.ss.utopia.flights.entity.flight.Flight;
@@ -9,11 +10,13 @@ import com.ss.utopia.flights.security.permissions.AdminOnlyPermission;
 import com.ss.utopia.flights.security.permissions.EmployeeOnlyPermission;
 import com.ss.utopia.flights.service.FlightService;
 import java.net.URI;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -23,6 +26,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
@@ -53,6 +57,35 @@ public class FlightsController {
   public ResponseEntity<Flight> getFlightById(@PathVariable Long id) {
     log.info("GET Flight id=" + id);
     return ResponseEntity.of(Optional.ofNullable(service.getFlightById(id)));
+  }
+
+  @GetMapping(value = "/flight-search", produces = {MediaType.APPLICATION_JSON_VALUE,
+      MediaType.APPLICATION_XML_VALUE})
+  public ResponseEntity<?> getFlightByCriteria(
+      @RequestParam(name = "origin") String[] origins,
+      @RequestParam(name = "destinations") String[] destinations,
+      @RequestParam(name = "departure") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate departureDate,
+      @RequestParam(name = "return", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Optional<LocalDate> returnDate,
+      @RequestParam(name = "passengercount", required = false) Optional<Integer> numberOfPassengers,
+      @RequestParam(value = "multihop", required = false, defaultValue = "false") Boolean multiHop,
+      @RequestParam(value = "sort", required = false, defaultValue = "expensive") String sortBy
+  )
+  //Change to Flight Query Parameters
+  {
+    FlightSearchDto flightSearchDto = new FlightSearchDto();
+    flightSearchDto.setOrigins(origins);
+    flightSearchDto.setDestinations(destinations);
+    flightSearchDto.setDepartureDate(departureDate);
+    flightSearchDto.setReturnDate(returnDate);
+    flightSearchDto.setNumberOfPassengers(numberOfPassengers);
+    flightSearchDto.setMultiHop(multiHop);
+    flightSearchDto.setSortBy(sortBy);
+    log.info("Getting flights with certain criteria= " + flightSearchDto);
+    var flights = service.getFlightByCriteria(flightSearchDto);
+    if (flights.isEmpty()) {
+      return ResponseEntity.noContent().build();
+    }
+    return ResponseEntity.ok(flights);
   }
 
   @EmployeeOnlyPermission
