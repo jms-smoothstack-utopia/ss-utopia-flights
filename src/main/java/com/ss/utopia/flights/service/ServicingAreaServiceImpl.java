@@ -2,21 +2,18 @@ package com.ss.utopia.flights.service;
 
 import com.ss.utopia.flights.dto.airport.ServicingAreaDto;
 import com.ss.utopia.flights.entity.airport.ServicingArea;
-import com.ss.utopia.flights.exception.DuplicateAirportException;
 import com.ss.utopia.flights.repository.ServicingAreaRepository;
 import java.util.List;
 import java.util.NoSuchElementException;
-import javax.naming.NameAlreadyBoundException;
-
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ServicingAreaImpl implements ServicingAreaService {
+public class ServicingAreaServiceImpl implements ServicingAreaService {
 
   private final ServicingAreaRepository servicingAreaRepository;
 
-  public ServicingAreaImpl(
+  public ServicingAreaServiceImpl(
       ServicingAreaRepository servicingAreaRepository) {
     this.servicingAreaRepository = servicingAreaRepository;
   }
@@ -28,13 +25,15 @@ public class ServicingAreaImpl implements ServicingAreaService {
 
   @Override
   public ServicingArea getServicingAreaById(Long id) {
-    return servicingAreaRepository.findById(id).orElseThrow(NoSuchElementException::new);
+    return servicingAreaRepository.findById(id)
+        .orElseThrow();
   }
 
   @Override
   public ServicingArea createNewServicingArea(ServicingAreaDto servicingAreaDto) {
     servicingAreaRepository.findByServicingArea(servicingAreaDto.getServicingArea())
-        .ifPresent(area -> { throw new DuplicateKeyException(area.getServicingArea());
+        .ifPresent(area -> {
+          throw new DuplicateKeyException(area.getServicingArea());
         });
 
     var servicingAreaEntity = ServicingArea
@@ -46,6 +45,7 @@ public class ServicingAreaImpl implements ServicingAreaService {
 
   @Override
   public ServicingArea returnServicingArea(String servicingArea) {
-    return servicingAreaRepository.findByServicingArea(servicingArea).orElseThrow();
+    return servicingAreaRepository.findByServicingArea(servicingArea)
+        .orElseThrow();
   }
 }
