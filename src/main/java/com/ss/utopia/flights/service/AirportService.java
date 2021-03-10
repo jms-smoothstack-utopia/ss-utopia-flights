@@ -18,7 +18,4 @@ public interface AirportService {
 
   void deleteAirport(String id);
 
-  List<Airport> getAirportsByServicingCity(ServicingArea servicingArea);
-
-  Airport getAirportOrReturnNull(String area);
 }

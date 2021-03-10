@@ -1,7 +1,5 @@
 package com.ss.utopia.flights.service;
 
-import static java.util.stream.Collectors.toList;
-
 import com.ss.utopia.flights.dto.airport.CreateAirportDto;
 import com.ss.utopia.flights.dto.airport.UpdateAirportDto;
 import com.ss.utopia.flights.entity.airport.Airport;
@@ -56,18 +54,5 @@ public class AirportServiceImpl implements AirportService {
     //fixme handle FK constraint
     repository.findById(id)
         .ifPresent(repository::delete);
-  }
-
-  @Override
-  public List<Airport> getAirportsByServicingCity(ServicingArea servicingArea) {
-    return repository.findAll()
-        .stream()
-        .filter(e -> e.getServicingArea()
-            .equals(servicingArea)).collect(
-            toList());
-  }
-
-  public Airport getAirportOrReturnNull(String area) {
-    return repository.findById(area).orElse(null);
   }
 }
