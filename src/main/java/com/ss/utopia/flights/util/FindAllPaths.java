@@ -18,7 +18,11 @@ public class FindAllPaths {
   private final LocalDate departureDate;
   public List<List<Flight>> allCorrespondingFlights;
 
-  public FindAllPaths(List<Airport> origin, List<Airport> destination, List<Flight> listOfFlights, Integer numberOfPassengers, LocalDate departureDate){
+  public FindAllPaths(List<Airport> origin,
+                      List<Airport> destination,
+                      List<Flight> listOfFlights,
+                      Integer numberOfPassengers,
+                      LocalDate departureDate) {
     this.origin = origin;
     this.destination = destination;
     this.availableFlights = listOfFlights;
@@ -27,17 +31,19 @@ public class FindAllPaths {
     this.allCorrespondingFlights = new ArrayList<>();
   }
 
-  public void getAllPaths(){
+  public void getAllPaths() {
     List<Airport> airportsVisited = new ArrayList<>();
     ArrayList<Flight> currentPath = new ArrayList<>();
-    for(Airport i: this.origin){
-      List<Flight> flightsThatStartAtOrigin = this.availableFlights.stream().parallel()
-              .filter(flight -> flight.getOrigin() == i)
-              .filter(flight -> flight.getApproximateDateTimeStart().toLocalDate().equals(departureDate))
-              .filter(flight -> getAvailableSeats(flight).size() >= this.passengerCount)
-              .collect(Collectors.toList());
+    for (Airport i : this.origin) {
+      List<Flight> flightsThatStartAtOrigin = this.availableFlights.stream()
+          .filter(flight -> flight.getOrigin().equals(i))
+          .filter(flight -> flight.getApproximateDateTimeStart()
+              .toLocalDate()
+              .equals(departureDate))
+          .filter(flight -> getAvailableSeats(flight).size() >= this.passengerCount)
+          .collect(Collectors.toList());
       airportsVisited.add(i);
-      for(Flight j: flightsThatStartAtOrigin){
+      for (Flight j : flightsThatStartAtOrigin) {
         currentPath.add(j);
         dfs(currentPath, airportsVisited);
         currentPath.remove(j);
@@ -46,20 +52,20 @@ public class FindAllPaths {
     }
   }
 
-  public List<List<Flight>> returnAllValidFlights(){
+  public List<List<Flight>> returnAllValidFlights() {
     return this.allCorrespondingFlights;
   }
 
   private List<Seat> getAvailableSeats(Flight flight) {
     return flight.getSeats().stream()
-            .filter(x -> x.getSeatStatus() == SeatStatus.AVAILABLE)
-            .collect(Collectors.toList());
+        .filter(x -> x.getSeatStatus() == SeatStatus.AVAILABLE)
+        .collect(Collectors.toList());
   }
 
   private void dfs(ArrayList<Flight> currentPath, List<Airport> airportsVisited) {
     Flight lastFlight = currentPath.get(currentPath.size() - 1);
 
-    if (this.destination.contains(lastFlight.getDestination())){
+    if (this.destination.contains(lastFlight.getDestination())) {
       this.allCorrespondingFlights.add(new ArrayList<>(currentPath));
       return;
     }
@@ -69,18 +75,22 @@ public class FindAllPaths {
     //Make sure we do not go to the same airport twice
     airportsVisited.add(lastFlight.getDestination());
 
-    List<Flight> validFlightsFromThisAirport = this.availableFlights.stream().parallel()
-            .filter(flight -> flight.getOrigin() == lastFlight.getDestination())
-            .filter(flight -> !airportsVisited.contains(flight.getDestination()))
-            .filter(flight -> flight.getApproximateDateTimeStart().toLocalDateTime().isAfter(flightEndingTime) && flight.getApproximateDateTimeStart().toLocalDateTime().isBefore(flightEndingTime.plusHours(8)))
-            .filter(flight -> getAvailableSeats(flight).size() >= this.passengerCount)
-            .collect(Collectors.toList());
+    List<Flight> validFlightsFromThisAirport = this.availableFlights.stream()
+        .filter(flight -> flight.getOrigin().equals(lastFlight.getDestination()))
+        .filter(flight -> !airportsVisited.contains(flight.getDestination()))
+        .filter(flight ->
+                    flight.getApproximateDateTimeStart().toLocalDateTime().isAfter(flightEndingTime)
+                        && flight.getApproximateDateTimeStart()
+                        .toLocalDateTime()
+                        .isBefore(flightEndingTime.plusHours(8)))
+        .filter(flight -> getAvailableSeats(flight).size() >= this.passengerCount)
+        .collect(Collectors.toList());
 
-    if (validFlightsFromThisAirport.isEmpty()){
+    if (validFlightsFromThisAirport.isEmpty()) {
       return;
     }
 
-    for(Flight i: validFlightsFromThisAirport){
+    for (Flight i : validFlightsFromThisAirport) {
       currentPath.add(i);
       dfs(currentPath, airportsVisited);
       currentPath.remove(i);
