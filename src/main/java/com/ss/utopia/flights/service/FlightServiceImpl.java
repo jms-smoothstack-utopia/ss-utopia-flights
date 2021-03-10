@@ -20,6 +20,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -280,7 +281,7 @@ public class FlightServiceImpl implements FlightService {
       }
     }
     if (processedList.isEmpty()) {
-      throw new NoSuchAirportException(ListOfLocations);
+      throw new NoSuchAirportException(Arrays.asList(ListOfLocations));
     }
     return processedList;
   }
