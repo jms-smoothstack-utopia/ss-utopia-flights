@@ -2,11 +2,7 @@ package com.ss.utopia.flights.entity.flight;
 
 import com.ss.utopia.flights.entity.shared.SeatClass;
 import java.math.BigDecimal;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,10 +17,7 @@ import lombok.NoArgsConstructor;
 public class Seat {
 
   @Id
-  private String id;  // Flight ID and Seat Row/Col, ie "1234-2A"
-
-  @ManyToOne
-  private Flight flight;
+  private String id; // Flight ID, Seat Row/Col, and Class, ie "1234-2A"
 
   @NotNull
   private Integer seatRow;
