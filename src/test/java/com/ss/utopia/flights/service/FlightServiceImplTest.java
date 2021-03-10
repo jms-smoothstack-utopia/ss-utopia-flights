@@ -119,8 +119,8 @@ public class FlightServiceImplTest {
                 .originId("IAD")
                 .destinationId("LAX")
                 .airplaneId(1L)
-                .approximateDateTimeStart(ZonedDateTime.of(departure, ZoneId.of("EST", ZoneId.SHORT_IDS)))
-                .approximateDateTimeEnd(ZonedDateTime.of(arrival, ZoneId.of("EST", ZoneId.SHORT_IDS)))
+                .approximateDateTimeStart(departure)
+                .approximateDateTimeEnd(arrival)
                 .loyaltyPoints(50)
                 .build();
 
@@ -130,8 +130,8 @@ public class FlightServiceImplTest {
                 .destination(LAX)
                 .airplane(Boeing747)
                 .possibleLoyaltyPoints(50)
-                .approximateDateTimeStart(dto.getApproximateDateTimeStart())
-                .approximateDateTimeEnd(dto.getApproximateDateTimeEnd())
+                .approximateDateTimeStart(dto.getApproximateDateTimeStart().atZone(ZoneId.of("UTC")))
+                .approximateDateTimeEnd(dto.getApproximateDateTimeEnd().atZone(ZoneId.of("UTC")))
                 .build();
         when(flightRepository.findAll()).thenReturn(List.of(testFlight));
 
@@ -150,8 +150,8 @@ public class FlightServiceImplTest {
                 .originId("IAD")
                 .destinationId("LAX")
                 .airplaneId(1L)
-                .approximateDateTimeStart(ZonedDateTime.of(departure, ZoneId.of("EST", ZoneId.SHORT_IDS)))
-                .approximateDateTimeEnd(ZonedDateTime.of(arrival, ZoneId.of("EST", ZoneId.SHORT_IDS)))
+                .approximateDateTimeStart(departure)
+                .approximateDateTimeEnd(arrival)
                 .loyaltyPoints(50)
                 .build();
 
@@ -161,8 +161,8 @@ public class FlightServiceImplTest {
                 .destination(LAX)
                 .airplane(Boeing747)
                 .possibleLoyaltyPoints(50)
-                .approximateDateTimeStart(dto.getApproximateDateTimeStart())
-                .approximateDateTimeEnd(dto.getApproximateDateTimeEnd())
+                .approximateDateTimeStart(dto.getApproximateDateTimeStart().atZone(ZoneId.of("UTC")))
+                .approximateDateTimeEnd(dto.getApproximateDateTimeEnd().atZone(ZoneId.of("UTC")))
                 .build();
 
         when(airportService.getAirportById("IAD")).thenReturn(DullesAirport);
@@ -188,8 +188,8 @@ public class FlightServiceImplTest {
                 .originId("IAD")
                 .destinationId("LAX")
                 .airplaneId(1L)
-                .approximateDateTimeStart(ZonedDateTime.of(departure, ZoneId.of("EST", ZoneId.SHORT_IDS)))
-                .approximateDateTimeEnd(ZonedDateTime.of(arrival, ZoneId.of("EST", ZoneId.SHORT_IDS)))
+                .approximateDateTimeStart(departure)
+                .approximateDateTimeEnd(arrival)
                 .loyaltyPoints(50)
                 .build();
 
@@ -199,8 +199,8 @@ public class FlightServiceImplTest {
                 .destination(LAX)
                 .airplane(Boeing747)
                 .possibleLoyaltyPoints(50)
-                .approximateDateTimeStart(dto.getApproximateDateTimeStart())
-                .approximateDateTimeEnd(dto.getApproximateDateTimeEnd())
+                .approximateDateTimeStart(dto.getApproximateDateTimeStart().atZone(ZoneId.of("UTC")))
+                .approximateDateTimeEnd(dto.getApproximateDateTimeEnd().atZone(ZoneId.of("UTC")))
                 .build();
 
         when(airportService.getAirportById("IAD")).thenReturn(DullesAirport);

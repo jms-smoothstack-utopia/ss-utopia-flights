@@ -17,6 +17,7 @@ import com.ss.utopia.flights.repository.ServicingAreaRepository;
 import com.ss.utopia.flights.util.FindAllPaths;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -83,8 +84,8 @@ public class FlightServiceImpl implements FlightService {
         .airplane(airplane)
         .possibleLoyaltyPoints(loyaltyPoints)
         .flightActive(true)
-        .approximateDateTimeStart(createFlightDto.getApproximateDateTimeStart())
-        .approximateDateTimeEnd(createFlightDto.getApproximateDateTimeEnd())
+        .approximateDateTimeStart(createFlightDto.getApproximateDateTimeStart().atZone(ZoneId.of("UTC")))
+        .approximateDateTimeEnd(createFlightDto.getApproximateDateTimeEnd().atZone(ZoneId.of("UTC")))
         .build();
 
     flight = repository.save(flight);

@@ -121,18 +121,19 @@ public abstract class BaseSecurityTests {
       .flightActive(true)
       .build();
 
-  LocalDateTime departure = LocalDateTime.of(2021, 5, 17, 12, 10);
-  LocalDateTime arrival = LocalDateTime.of(2021, 5, 17, 16,0);
+  LocalDateTime departure = LocalDateTime.now().plusDays(1);
+  LocalDateTime arrival = LocalDateTime.now().plusWeeks(1);
 
-  CreateFlightDto mockCreateFlightDto = CreateFlightDto.builder()
-      .originId(mockFlight.getOrigin().getIataId())
-      .destinationId(mockFlight.getDestination().getIataId())
-      .airplaneId(mockAirplane.getId())
-      .approximateDateTimeStart(ZonedDateTime.of(departure, ZoneId.of("EST", ZoneId.SHORT_IDS)))
-      .approximateDateTimeEnd(ZonedDateTime.of(arrival, ZoneId.of("EST", ZoneId.SHORT_IDS)))
-      .baseSeatPrice(BigDecimal.ONE)
-      .loyaltyPoints(50)
-      .build();
+  //fixme This is not great. Need to implement serialization of LocalDateTime with JSON to be string to fix this.
+  String mockFlightJson = "{\n"
+      + "    \"originId\":\"ATL\",\n"
+      + "    \"destinationId\":\"LAX\",\n"
+      + "    \"airplaneId\":\"1\",\n"
+      + "    \"approximateDateTimeStart\":\""+departure.toString()+"\",\n"
+      + "    \"approximateDateTimeEnd\":\""+arrival.toString()+"\",\n"
+      + "    \"baseSeatPrice\":\"12.0\",\n"
+      + "    \"loyaltyPoints\":\"5\"\n"
+      + "}";
 
   UpdateFlightDto mockUpdateFlightDto = UpdateFlightDto.builder()
       .originId(mockFlight.getOrigin().getIataId())

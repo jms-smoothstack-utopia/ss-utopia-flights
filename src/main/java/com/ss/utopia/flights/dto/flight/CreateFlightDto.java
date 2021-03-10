@@ -1,7 +1,8 @@
 package com.ss.utopia.flights.dto.flight;
 
 import java.math.BigDecimal;
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
+import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -9,6 +10,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.DateTimeFormat.ISO;
 
 @Data
 @AllArgsConstructor
@@ -26,10 +29,14 @@ public class CreateFlightDto {
   private Long airplaneId;
 
   @NotNull
-  private ZonedDateTime approximateDateTimeStart;
+  @FutureOrPresent
+  @DateTimeFormat(iso = ISO.DATE_TIME)
+  private LocalDateTime approximateDateTimeStart;
 
   @NotNull
-  private ZonedDateTime approximateDateTimeEnd;
+  @FutureOrPresent
+  @DateTimeFormat(iso = ISO.DATE_TIME)
+  private LocalDateTime approximateDateTimeEnd;
 
   @NotNull
   @Min(value = 0)

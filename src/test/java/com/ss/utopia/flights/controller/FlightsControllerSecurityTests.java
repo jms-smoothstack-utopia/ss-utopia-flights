@@ -38,7 +38,7 @@ public class FlightsControllerSecurityTests extends BaseSecurityTests {
     when(flightService.getFlightById(mockFlight.getId())).thenReturn(mockFlight);
     when(flightService.getFlightSeats(mockFlight.getId())).thenReturn(mockFlight.getSeats());
     when(flightService.getFlightByCriteria(any())).thenReturn(Collections.emptyMap());
-    when(flightService.createNewFlight(mockCreateFlightDto)).thenReturn(mockFlight);
+    when(flightService.createNewFlight(any())).thenReturn(mockFlight);
   }
 
   @Test
@@ -103,17 +103,15 @@ public class FlightsControllerSecurityTests extends BaseSecurityTests {
         .andExpect(status().isOk());
   }
 
-  @Disabled
   @Test
   void test_createNewFlight_OnlyAllowedByEmployeeOrAdmin() throws Exception {
-    fail("AWAITING DTO REFACTOR");
     var alwaysAuthed = List.of(MockUser.ADMIN, MockUser.EMPLOYEE);
     for (var user : alwaysAuthed) {
       mvc
           .perform(
               post(EndpointConstants.API_V_0_1_FLIGHTS)
                   .contentType(MediaType.APPLICATION_JSON)
-                  .content(new ObjectMapper().writeValueAsString(mockCreateFlightDto))
+                  .content(mockFlightJson)
                   .header("Authorization", getJwt(user)))
           .andExpect(status().isCreated());
     }
@@ -124,7 +122,7 @@ public class FlightsControllerSecurityTests extends BaseSecurityTests {
           .perform(
               post(EndpointConstants.API_V_0_1_FLIGHTS)
                   .contentType(MediaType.APPLICATION_JSON)
-                  .content(new ObjectMapper().writeValueAsString(mockCreateFlightDto))
+                  .content(mockFlightJson)
                   .header("Authorization", getJwt(user)))
           .andExpect(status().isForbidden());
     }
@@ -133,7 +131,7 @@ public class FlightsControllerSecurityTests extends BaseSecurityTests {
         .perform(
             post(EndpointConstants.API_V_0_1_FLIGHTS)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(mockCreateFlightDto)))
+                .content(mockFlightJson))
         .andExpect(status().isForbidden());
   }
 
@@ -255,5 +253,4 @@ public class FlightsControllerSecurityTests extends BaseSecurityTests {
                 .content(new ObjectMapper().writeValueAsString(input)))
         .andExpect(status().isForbidden());
   }
-
 }
