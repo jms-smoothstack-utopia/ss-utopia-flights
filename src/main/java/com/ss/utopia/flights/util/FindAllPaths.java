@@ -34,20 +34,29 @@ public class FindAllPaths {
   public void getAllPaths() {
     List<Airport> airportsVisited = new ArrayList<>();
     ArrayList<Flight> currentPath = new ArrayList<>();
+
+    //TODO: this can be improved by removing state mutation and using stream collection
+    // however, unit testing needs to be added specifically to this class before
+    // making any changes
     for (Airport i : this.origin) {
-      List<Flight> flightsThatStartAtOrigin = this.availableFlights.stream()
+      List<Flight> flightsThatStartAtOrigin = this.availableFlights.parallelStream()
           .filter(flight -> flight.getOrigin().equals(i))
           .filter(flight -> flight.getApproximateDateTimeStart()
               .toLocalDate()
               .equals(departureDate))
           .filter(flight -> getAvailableSeats(flight).size() >= this.passengerCount)
           .collect(Collectors.toList());
+
       airportsVisited.add(i);
+
       for (Flight j : flightsThatStartAtOrigin) {
         currentPath.add(j);
+
         dfs(currentPath, airportsVisited);
+
         currentPath.remove(j);
       }
+
       airportsVisited.remove(i);
     }
   }
@@ -57,7 +66,8 @@ public class FindAllPaths {
   }
 
   private List<Seat> getAvailableSeats(Flight flight) {
-    return flight.getSeats().stream()
+    return flight.getSeats()
+        .parallelStream()
         .filter(x -> x.getSeatStatus() == SeatStatus.AVAILABLE)
         .collect(Collectors.toList());
   }
@@ -75,7 +85,7 @@ public class FindAllPaths {
     //Make sure we do not go to the same airport twice
     airportsVisited.add(lastFlight.getDestination());
 
-    List<Flight> validFlightsFromThisAirport = this.availableFlights.stream()
+    List<Flight> validFlightsFromThisAirport = this.availableFlights.parallelStream()
         .filter(flight -> flight.getOrigin().equals(lastFlight.getDestination()))
         .filter(flight -> !airportsVisited.contains(flight.getDestination()))
         .filter(flight ->
