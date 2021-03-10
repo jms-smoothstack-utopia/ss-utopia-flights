@@ -1,6 +1,6 @@
 package com.ss.utopia.flights.controller;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -18,7 +18,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -81,26 +80,28 @@ public class FlightsControllerSecurityTests extends BaseSecurityTests {
         .andExpect(status().isOk());
   }
 
-  @Disabled
   @Test
   void test_getFlightByCriteria_AllowedByAll() throws Exception {
-    fail("NOT IMPLEMENTED");
     var alwaysAuthed = List.of(MockUser.ADMIN,
                                MockUser.EMPLOYEE,
                                MockUser.TRAVEL_AGENT,
                                MockUser.CUSTOMER,
                                MockUser.DEFAULT);
     for (var user : alwaysAuthed) {
-      mvc
+      var result = mvc
           .perform(
-              get(EndpointConstants.API_V_0_1_FLIGHTS + "/")
+              get(EndpointConstants.API_V_0_1_FLIGHTS + "/flight-search")
                   .header("Authorization", getJwt(user)))
-          .andExpect(status().isOk());
+          .andReturn();
+      assertNotEquals(403, result.getResponse().getStatus());
+      assertNotEquals(404, result.getResponse().getStatus());
     }
-    mvc
+    var result = mvc
         .perform(
             get(EndpointConstants.API_V_0_1_FLIGHTS + "/" + mockFlight.getId()))
-        .andExpect(status().isOk());
+        .andReturn();
+    assertNotEquals(403, result.getResponse().getStatus());
+    assertNotEquals(404, result.getResponse().getStatus());
   }
 
   @Test
