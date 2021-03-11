@@ -42,7 +42,7 @@ public class Flight {
   @OneToOne
   private Airplane airplane;
 
-  @OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
+  @OneToMany(cascade = CascadeType.REMOVE)
   private List<Seat> seats;
 
   @Column(updatable = false)
