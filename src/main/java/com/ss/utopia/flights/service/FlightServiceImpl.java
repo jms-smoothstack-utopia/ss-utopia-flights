@@ -27,8 +27,10 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class FlightServiceImpl implements FlightService {
@@ -42,10 +44,12 @@ public class FlightServiceImpl implements FlightService {
 
   @Override
   public List<Flight> getAllFlights() {
+    log.trace("getAllFlights");
     return repository.findAll();
   }
 
   private List<Flight> getAllActiveFlights() {
+    log.trace("getAllActiveFlights");
     ZonedDateTime machineTime = ZonedDateTime.now();
     return repository.findAll().stream().parallel()
         .filter(flight -> flight.getApproximateDateTimeStart().isAfter(machineTime) &&
@@ -55,12 +59,14 @@ public class FlightServiceImpl implements FlightService {
 
   @Override
   public Flight getFlightById(Long id) {
+    log.trace("getFlightById id=" + id);
     return repository.findById(id)
         .orElseThrow(() -> new NoSuchFlightException(id));
   }
 
   @Override
   public Flight createNewFlight(CreateFlightDto createFlightDto) {
+    log.trace("createNewFlight");
     var origin = airportService.getAirportById(createFlightDto.getOriginId());
     var destination = airportService.getAirportById(createFlightDto.getDestinationId());
     var airplane = airplaneService.getAirplaneById(createFlightDto.getAirplaneId());
@@ -85,8 +91,10 @@ public class FlightServiceImpl implements FlightService {
         .airplane(airplane)
         .possibleLoyaltyPoints(loyaltyPoints)
         .flightActive(true)
-        .approximateDateTimeStart(createFlightDto.getApproximateDateTimeStart().atZone(ZoneId.of("UTC")))
-        .approximateDateTimeEnd(createFlightDto.getApproximateDateTimeEnd().atZone(ZoneId.of("UTC")))
+        .approximateDateTimeStart(createFlightDto.getApproximateDateTimeStart()
+                                      .atZone(ZoneId.of("UTC")))
+        .approximateDateTimeEnd(createFlightDto.getApproximateDateTimeEnd()
+                                    .atZone(ZoneId.of("UTC")))
         .build();
 
     flight = repository.save(flight);
@@ -125,6 +133,7 @@ public class FlightServiceImpl implements FlightService {
 
   @Override
   public void updateFlight(Long id, UpdateFlightDto updateFlightDto) {
+    log.trace("updateFlight id=" + id);
     //todo this is a complicated use case
     throw new IllegalStateException("NOT IMPLEMENTED");
   /*
@@ -136,16 +145,20 @@ public class FlightServiceImpl implements FlightService {
 
   @Override
   public void deleteFlight(Long id) {
+    log.trace("deleteFlight id=" + id);
     repository.findById(id)
         .ifPresent(repository::delete);
   }
 
   public List<Seat> getFlightSeats(Long flightId) {
+    log.trace("getFlightSeats id=" + flightId);
     var flight = getFlightById(flightId);
     return flight.getSeats();
   }
 
   public List<Seat> getAvailableSeats(Long flightId) {
+    //fixme this is an additional call to the database that is likely not required
+    log.trace("getAvailableSeats id=" + flightId);
     return getFlightSeats(flightId).stream().parallel()
         .filter(seats -> seats.getSeatStatus() == SeatStatus.AVAILABLE)
         .collect(Collectors.toList());
@@ -153,6 +166,7 @@ public class FlightServiceImpl implements FlightService {
 
   @Override
   public void updateFlightSeats(Long flightId, Map<String, UpdateSeatDto> seatDtoMap) {
+    log.trace("updateFlightSeats id=" + flightId);
     var flight = getFlightById(flightId);
 
     flight.getSeats()
@@ -173,7 +187,7 @@ public class FlightServiceImpl implements FlightService {
 
   @Override
   public Map<String, ?> getFlightByCriteria(FlightSearchDto flightSearchDto) {
-
+    log.trace("getFlightByCriteria");
     //Make sure we have available flights that exist in the database
     List<Flight> availableFlights = getAllFlights();
     if (availableFlights.isEmpty()) {
@@ -211,6 +225,7 @@ public class FlightServiceImpl implements FlightService {
                                                             LocalDate departureDate,
                                                             Optional<LocalDate> returnDate,
                                                             Integer numberOfPassengers) {
+    log.trace("findMultiHopFlightsBasedOnCriteria");
     List<Flight> availableFlights = getAllActiveFlights();
     List<List<Flight>> departFlights = getMultiHopFlightsBetweenAirports(originAirports,
                                                                          destinationAirports,
@@ -233,6 +248,7 @@ public class FlightServiceImpl implements FlightService {
                                                                Integer numberOfPassengers,
                                                                List<Flight> availableFlights,
                                                                LocalDate departureDate) {
+    log.trace("getMultiHopFlightsBetweenAirports");
     FindAllPaths findAllPaths = new FindAllPaths(origin,
                                                  destination,
                                                  availableFlights,
@@ -247,6 +263,7 @@ public class FlightServiceImpl implements FlightService {
                                                                       LocalDate departureDate,
                                                                       Optional<LocalDate> returnDate,
                                                                       Integer passengerCount) {
+    log.trace("findNonStopFlightsBasedOnCriteria");
     List<Flight> flightsWithCriteria = findNonStopFlightsBetweenLists(originAirports,
                                                                       destinationAirports,
                                                                       departureDate,
@@ -266,7 +283,7 @@ public class FlightServiceImpl implements FlightService {
   }
 
   private List<Airport> validateAreasAndReturnAirports(String[] ListOfLocations) {
-
+    log.trace("validateAreasAndReturnAirports");
     List<Airport> processedList = new ArrayList<>();
     for (String area : ListOfLocations) {
       var tempArea = servicingAreaRepository.findByServicingArea(area);
@@ -290,7 +307,9 @@ public class FlightServiceImpl implements FlightService {
                                                       List<Airport> destinations,
                                                       LocalDate departureDate,
                                                       Integer passengerCount) {
-    return getAllActiveFlights().stream().parallel()
+    log.trace("findNonStopFlightsBetweenLists");
+    
+    return getAllActiveFlights().stream()
         .filter(flight -> origins.contains(flight.getOrigin())
             && destinations.contains(flight.getDestination()))
         .filter(flight -> flight.getApproximateDateTimeStart().toLocalDate().equals(departureDate))

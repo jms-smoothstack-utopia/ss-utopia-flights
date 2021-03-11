@@ -8,7 +8,9 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class FindAllPaths {
 
   private final List<Airport> origin;
@@ -23,6 +25,7 @@ public class FindAllPaths {
                       List<Flight> listOfFlights,
                       Integer numberOfPassengers,
                       LocalDate departureDate) {
+    log.trace("Constructor callled.");
     this.origin = origin;
     this.destination = destination;
     this.availableFlights = listOfFlights;
@@ -32,6 +35,7 @@ public class FindAllPaths {
   }
 
   public void getAllPaths() {
+    log.trace("getAllPaths");
     List<Airport> airportsVisited = new ArrayList<>();
     ArrayList<Flight> currentPath = new ArrayList<>();
 
@@ -39,7 +43,7 @@ public class FindAllPaths {
     // however, unit testing needs to be added specifically to this class before
     // making any changes
     for (Airport i : this.origin) {
-      List<Flight> flightsThatStartAtOrigin = this.availableFlights.parallelStream()
+      List<Flight> flightsThatStartAtOrigin = this.availableFlights.stream()
           .filter(flight -> flight.getOrigin().equals(i))
           .filter(flight -> flight.getApproximateDateTimeStart()
               .toLocalDate()
@@ -62,17 +66,20 @@ public class FindAllPaths {
   }
 
   public List<List<Flight>> returnAllValidFlights() {
+    log.trace("returnAllValidFlights");
     return this.allCorrespondingFlights;
   }
 
   private List<Seat> getAvailableSeats(Flight flight) {
+    log.trace("getAvailableSeats");
     return flight.getSeats()
-        .parallelStream()
+        .stream()
         .filter(x -> x.getSeatStatus() == SeatStatus.AVAILABLE)
         .collect(Collectors.toList());
   }
 
   private void dfs(ArrayList<Flight> currentPath, List<Airport> airportsVisited) {
+    log.trace("dfs");
     Flight lastFlight = currentPath.get(currentPath.size() - 1);
 
     if (this.destination.contains(lastFlight.getDestination())) {
@@ -85,7 +92,7 @@ public class FindAllPaths {
     //Make sure we do not go to the same airport twice
     airportsVisited.add(lastFlight.getDestination());
 
-    List<Flight> validFlightsFromThisAirport = this.availableFlights.parallelStream()
+    List<Flight> validFlightsFromThisAirport = this.availableFlights.stream()
         .filter(flight -> flight.getOrigin().equals(lastFlight.getDestination()))
         .filter(flight -> !airportsVisited.contains(flight.getDestination()))
         .filter(flight ->
