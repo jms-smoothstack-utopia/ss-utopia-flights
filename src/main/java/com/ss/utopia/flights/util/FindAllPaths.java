@@ -25,7 +25,7 @@ public class FindAllPaths {
                       List<Flight> listOfFlights,
                       Integer numberOfPassengers,
                       LocalDate departureDate) {
-    log.trace("Constructor callled.");
+    log.trace("Constructor called.");
     this.origin = origin;
     this.destination = destination;
     this.availableFlights = listOfFlights;

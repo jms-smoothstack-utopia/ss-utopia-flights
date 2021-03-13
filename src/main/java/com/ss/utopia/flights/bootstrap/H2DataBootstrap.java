@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-@Profile("local-h2")
+@Profile({"local-h2", "integration-test"})
 @RequiredArgsConstructor
 public class H2DataBootstrap implements CommandLineRunner {
 
