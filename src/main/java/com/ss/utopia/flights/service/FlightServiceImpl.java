@@ -309,7 +309,7 @@ public class FlightServiceImpl implements FlightService {
                                                       Integer passengerCount) {
     log.trace("findNonStopFlightsBetweenLists");
     
-    return getAllActiveFlights().stream().parallel()
+    return getAllActiveFlights().stream()
         .filter(flight -> origins.contains(flight.getOrigin())
             && destinations.contains(flight.getDestination()))
         .filter(flight -> flight.getApproximateDateTimeStart().toLocalDate().equals(departureDate))
