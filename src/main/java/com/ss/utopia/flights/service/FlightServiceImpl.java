@@ -52,8 +52,8 @@ public class FlightServiceImpl implements FlightService {
     log.trace("getAllActiveFlights");
     ZonedDateTime machineTime = ZonedDateTime.now();
     return repository.findAll().stream().parallel()
-        .filter(flight -> flight.getApproximateDateTimeStart().isAfter(machineTime) &&
-            flight.isFlightActive())
+        .filter(flight -> flight.getApproximateDateTimeStart().isAfter(machineTime)
+            && flight.isFlightActive())
         .collect(Collectors.toList());
   }
 
@@ -108,15 +108,15 @@ public class FlightServiceImpl implements FlightService {
           for (int row = 0; row < config.getNumRows(); row++) {
             for (int col = 0; col < config.getNumSeatsPerRow(); col++) {
               char baseLetter = 'A';
-              char CorrectLetter = (char) (baseLetter + col);
+              char correctLetter = (char) (baseLetter + col);
               var seat = Seat.builder()
                   .id(String.format("FLIGHT %d-%d%c %s",
                                     flightId,
                                     row + 1,
-                                    CorrectLetter,
+                                    correctLetter,
                                     config.getSeatClass()))
                   .seatRow(row + 1)
-                  .seatColumn(CorrectLetter)
+                  .seatColumn(correctLetter)
                   .seatClass(config.getSeatClass())
                   .seatStatus(SeatStatus.AVAILABLE)
                   .price(basePrice)
@@ -134,13 +134,7 @@ public class FlightServiceImpl implements FlightService {
   @Override
   public void updateFlight(Long id, UpdateFlightDto updateFlightDto) {
     log.trace("updateFlight id=" + id);
-    //todo this is a complicated use case
     throw new IllegalStateException("NOT IMPLEMENTED");
-  /*
-    var toUpdate = getFlightById(id);
-    updateFlightDto.update(toUpdate);
-    repository.save(toUpdate);
-  */
   }
 
   @Override
@@ -157,7 +151,6 @@ public class FlightServiceImpl implements FlightService {
   }
 
   public List<Seat> getAvailableSeats(Long flightId) {
-    //fixme this is an additional call to the database that is likely not required
     log.trace("getAvailableSeats id=" + flightId);
     return getFlightSeats(flightId).stream().parallel()
         .filter(seats -> seats.getSeatStatus() == SeatStatus.AVAILABLE)
@@ -198,12 +191,7 @@ public class FlightServiceImpl implements FlightService {
     var originAirports = validateAreasAndReturnAirports(flightSearchDto.getOrigins());
     var destinationAirports = validateAreasAndReturnAirports(flightSearchDto.getDestinations());
 
-    Integer numberOfPassengers;
-    if (flightSearchDto.getNumberOfPassengers().isPresent()) {
-      numberOfPassengers = flightSearchDto.getNumberOfPassengers().get();
-    } else {
-      numberOfPassengers = 1;
-    }
+    var numberOfPassengers = flightSearchDto.getNumberOfPassengers().orElse(1);
 
     if (!flightSearchDto.isMultiHop()) {
       return findNonStopFlightsBasedOnCriteria(originAirports,
@@ -238,7 +226,8 @@ public class FlightServiceImpl implements FlightService {
                                                                            numberOfPassengers,
                                                                            availableFlights,
                                                                            returnDate.get());
-      return Map.of("Origin to destination", departFlights, "Destination to origin", returnFlights);
+      return Map.of("Origin to destination", departFlights,
+                    "Destination to origin", returnFlights);
     }
     return Map.of("Origin to destination", departFlights);
   }
@@ -258,11 +247,12 @@ public class FlightServiceImpl implements FlightService {
     return findAllPaths.returnAllValidFlights();
   }
 
-  private Map<String, List<Flight>> findNonStopFlightsBasedOnCriteria(List<Airport> originAirports,
-                                                                      List<Airport> destinationAirports,
-                                                                      LocalDate departureDate,
-                                                                      Optional<LocalDate> returnDate,
-                                                                      Integer passengerCount) {
+  private Map<String, List<Flight>> findNonStopFlightsBasedOnCriteria(
+      List<Airport> originAirports,
+      List<Airport> destinationAirports,
+      LocalDate departureDate,
+      Optional<LocalDate> returnDate,
+      Integer passengerCount) {
     log.trace("findNonStopFlightsBasedOnCriteria");
     List<Flight> flightsWithCriteria = findNonStopFlightsBetweenLists(originAirports,
                                                                       destinationAirports,
@@ -282,11 +272,11 @@ public class FlightServiceImpl implements FlightService {
     return setOfFlights;
   }
 
-  private List<Airport> validateAreasAndReturnAirports(String[] ListOfLocations) {
+  private List<Airport> validateAreasAndReturnAirports(String[] locations) {
     log.trace("validateAreasAndReturnAirports");
     List<Airport> processedList = new ArrayList<>();
-    for (String area : ListOfLocations) {
-      var tempArea = servicingAreaRepository.findByServicingArea(area);
+    for (String area : locations) {
+      var tempArea = servicingAreaRepository.findByAreaName(area);
       var tempAirPort = airportRepository.findById(area);
       if (tempArea.isEmpty() && tempAirPort.isEmpty()) {
         throw new NoSuchAirportException(area);
@@ -298,7 +288,7 @@ public class FlightServiceImpl implements FlightService {
       }
     }
     if (processedList.isEmpty()) {
-      throw new NoSuchAirportException(Arrays.asList(ListOfLocations));
+      throw new NoSuchAirportException(Arrays.asList(locations));
     }
     return processedList;
   }
@@ -308,7 +298,7 @@ public class FlightServiceImpl implements FlightService {
                                                       LocalDate departureDate,
                                                       Integer passengerCount) {
     log.trace("findNonStopFlightsBetweenLists");
-    
+
     return getAllActiveFlights().stream()
         .filter(flight -> origins.contains(flight.getOrigin())
             && destinations.contains(flight.getDestination()))

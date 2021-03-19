@@ -1,11 +1,10 @@
 package com.ss.utopia.flights.dto.airport;
 
 import com.ss.utopia.flights.entity.airport.Airport;
+import com.ss.utopia.flights.entity.airport.ServicingArea;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-
-import com.ss.utopia.flights.entity.airport.ServicingArea;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -36,7 +35,8 @@ public class CreateAirportDto {
   private long servicingAreaId;
 
   @NotBlank
-  @Pattern(regexp = "^\\d{5}(?:[-\\s]\\d{4})?$", message = "Zipcode does not meet expected format: '#####-####' or '#####'")
+  @Pattern(regexp = "^\\d{5}(?:[-\\s]\\d{4})?$",
+      message = "Zipcode does not meet expected format: '#####-####' or '#####'")
   private String zipcode;
 
   public Airport mapToEntity(ServicingArea servicingArea) {
