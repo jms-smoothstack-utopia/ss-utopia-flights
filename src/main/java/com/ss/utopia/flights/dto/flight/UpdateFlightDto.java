@@ -7,19 +7,18 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-//todo design UpdateFlightDto
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 public class UpdateFlightDto implements Updatable<Flight> {
-  
+
   private String originId;
   private String destinationId;
   private Long airplaneId;
 
   @Override
   public void update(Flight flight) {
-
+    throw new UnsupportedOperationException();
   }
 }

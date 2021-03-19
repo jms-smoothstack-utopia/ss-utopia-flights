@@ -18,7 +18,7 @@ public class FindAllPaths {
   private final List<Flight> availableFlights;
   private final Integer passengerCount;
   private final LocalDate departureDate;
-  public List<List<Flight>> allCorrespondingFlights;
+  private final List<List<Flight>> allCorrespondingFlights;
 
   public FindAllPaths(List<Airport> origin,
                       List<Airport> destination,
@@ -39,7 +39,7 @@ public class FindAllPaths {
     List<Airport> airportsVisited = new ArrayList<>();
     ArrayList<Flight> currentPath = new ArrayList<>();
 
-    //TODO: this can be improved by removing state mutation and using stream collection
+    // this can be improved by removing state mutation and using stream collection
     // however, unit testing needs to be added specifically to this class before
     // making any changes
     for (Airport i : this.origin) {

@@ -50,7 +50,7 @@ public abstract class BaseSecurityTests {
 
   ServicingArea mockServicingArea = ServicingArea.builder()
       .id(1L)
-      .servicingArea("somewhere")
+      .areaName("somewhere")
       .build();
 
   Airport mockAirport = Airport.builder()
@@ -97,7 +97,7 @@ public abstract class BaseSecurityTests {
       .build();
 
   ServicingAreaDto mockServicingAreaDto = ServicingAreaDto.builder()
-      .servicingArea(mockServicingArea.getServicingArea())
+      .servicingArea(mockServicingArea.getAreaName())
       .build();
 
 

@@ -63,15 +63,23 @@ public class FlightsController {
       MediaType.APPLICATION_XML_VALUE})
   public ResponseEntity<?> getFlightByCriteria(
       @RequestParam(name = "origin") String[] origins,
+
       @RequestParam(name = "destinations") String[] destinations,
-      @RequestParam(name = "departure") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate departureDate,
-      @RequestParam(name = "return", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Optional<LocalDate> returnDate,
+
+      @RequestParam(name = "departure")
+      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+          LocalDate departureDate,
+
+      @RequestParam(name = "return", required = false)
+      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+          Optional<LocalDate> returnDate,
+
       @RequestParam(name = "passengercount", required = false) Optional<Integer> numberOfPassengers,
+
       @RequestParam(value = "multihop", required = false, defaultValue = "false") Boolean multiHop,
+
       @RequestParam(value = "sort", required = false, defaultValue = "expensive") String sortBy
-  )
-  //Change to Flight Query Parameters
-  {
+  ) {
     FlightSearchDto flightSearchDto = new FlightSearchDto();
     flightSearchDto.setOrigins(origins);
     flightSearchDto.setDestinations(destinations);
@@ -100,10 +108,8 @@ public class FlightsController {
   @EmployeeOnlyPermission
   @PutMapping(value = "/{id}", consumes = {MediaType.APPLICATION_JSON_VALUE,
       MediaType.APPLICATION_XML_VALUE})
-  public ResponseEntity<?> updateFlight(@PathVariable Long id,
+  public ResponseEntity<Void> updateFlight(@PathVariable Long id,
                                         @Valid @RequestBody UpdateFlightDto airplaneDto) {
-    //todo this is a complicated use case that needs to be carefully considered
-    // ideally, we would prefer a method that updates individual seats
     log.info("PUT Flight id=" + id);
     service.updateFlight(id, airplaneDto);
     return ResponseEntity.noContent().build();
@@ -111,7 +117,7 @@ public class FlightsController {
 
   @AdminOnlyPermission
   @DeleteMapping("/{id}")
-  public ResponseEntity<?> deleteFlight(@PathVariable Long id) {
+  public ResponseEntity<Void> deleteFlight(@PathVariable Long id) {
     log.info("DELETE Flight id=" + id);
     service.deleteFlight(id);
     return ResponseEntity.noContent().build();
@@ -125,7 +131,7 @@ public class FlightsController {
 
   @EmployeeOnlyPermission
   @PutMapping("/{flightId}/seats")
-  public ResponseEntity<?> updateSeat(@PathVariable Long flightId,
+  public ResponseEntity<Void> updateSeat(@PathVariable Long flightId,
                                       @Valid @RequestBody Map<String, UpdateSeatDto> seatDtoMap) {
     log.info("PUT Seat flightId=" + flightId);
     service.updateFlightSeats(flightId, seatDtoMap);

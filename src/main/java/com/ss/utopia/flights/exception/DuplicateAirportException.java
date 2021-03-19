@@ -1,8 +1,6 @@
 package com.ss.utopia.flights.exception;
 
-import org.springframework.dao.DuplicateKeyException;
-
-public class DuplicateAirportException extends DuplicateKeyException {
+public class DuplicateAirportException extends IllegalStateException {
 
   private final String id;
 

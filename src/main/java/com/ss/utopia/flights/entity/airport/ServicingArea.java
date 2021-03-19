@@ -22,5 +22,5 @@ public class ServicingArea {
   private Long id;
 
   @NotBlank
-  private String servicingArea;
+  private String areaName;
 }
