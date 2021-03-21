@@ -55,7 +55,8 @@ public class AirportsController {
 
   @EmployeeOnlyPermission
   @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-  public ResponseEntity<Airport> createNewAirport(@Valid @RequestBody CreateAirportDto createAirportDto) {
+  public ResponseEntity<Airport> createNewAirport(@Valid @RequestBody
+                                                      CreateAirportDto createAirportDto) {
     log.info("POST Airport");
     var airport = service.createNewAirport(createAirportDto);
     var uri = URI.create(MAPPING + "/" + airport.getIataId());
@@ -65,7 +66,7 @@ public class AirportsController {
   @EmployeeOnlyPermission
   @PutMapping(value = "/{id}", consumes = {MediaType.APPLICATION_JSON_VALUE,
       MediaType.APPLICATION_XML_VALUE})
-  public ResponseEntity<?> updateAirport(@PathVariable String id,
+  public ResponseEntity<Void> updateAirport(@PathVariable String id,
                                          @Valid @RequestBody UpdateAirportDto updateAirportDto) {
     log.info("PUT Airport id=" + id);
     service.updateAirport(id, updateAirportDto);
@@ -74,7 +75,7 @@ public class AirportsController {
 
   @AdminOnlyPermission
   @DeleteMapping("/{id}")
-  public ResponseEntity<?> deleteAirport(@PathVariable String id) {
+  public ResponseEntity<Void> deleteAirport(@PathVariable String id) {
     log.info("DELETE Airport id=" + id);
     service.deleteAirport(id);
     return ResponseEntity.noContent().build();

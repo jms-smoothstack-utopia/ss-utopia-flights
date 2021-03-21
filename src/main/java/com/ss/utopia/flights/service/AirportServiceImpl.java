@@ -37,7 +37,8 @@ public class AirportServiceImpl implements AirportService {
         });
 
     //Need to map to entity
-    ServicingArea servicingArea = servicingAreaService.getServicingAreaById(createAirportDto.getServicingAreaId());
+    ServicingArea servicingArea = servicingAreaService
+        .getServicingAreaById(createAirportDto.getServicingAreaId());
 
     return repository.save(createAirportDto.mapToEntity(servicingArea));
   }
@@ -51,7 +52,6 @@ public class AirportServiceImpl implements AirportService {
 
   @Override
   public void deleteAirport(String id) {
-    //fixme handle FK constraint
     repository.findById(id)
         .ifPresent(repository::delete);
   }

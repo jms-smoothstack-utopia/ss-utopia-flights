@@ -76,71 +76,71 @@ public class H2DataBootstrap implements CommandLineRunner {
         .build();
     flightService.createNewFlight(anotherFlight);
 
-    LocalDateTime multiHopJFKDeparture = LocalDateTime.of(2021, 5, 17, 17, 20);
-    LocalDateTime multiHopJFKArrival = LocalDateTime.of(2021, 5, 17, 21, 0);
-    CreateFlightDto multihopJFKFlight = CreateFlightDto.builder()
+    LocalDateTime multiHopJfkDeparture = LocalDateTime.of(2021, 5, 17, 17, 20);
+    LocalDateTime multiHopJfkArrival = LocalDateTime.of(2021, 5, 17, 21, 0);
+    CreateFlightDto multiHopJfkFlight = CreateFlightDto.builder()
         .originId("DCA")
         .destinationId("JFK")
         .airplaneId(1L)
-        .approximateDateTimeStart(multiHopJFKDeparture)
-        .approximateDateTimeEnd(multiHopJFKArrival)
+        .approximateDateTimeStart(multiHopJfkDeparture)
+        .approximateDateTimeEnd(multiHopJfkArrival)
         .build();
-    flightService.createNewFlight(multihopJFKFlight);
+    flightService.createNewFlight(multiHopJfkFlight);
 
-    LocalDateTime multiHopSFODeparture = LocalDateTime.of(2021, 5, 17, 17, 20);
-    LocalDateTime multiHopSFOArrival = LocalDateTime.of(2021, 5, 17, 21, 0);
-    CreateFlightDto multihopSFOFlight = CreateFlightDto.builder()
+    LocalDateTime multiHopSfoDeparture = LocalDateTime.of(2021, 5, 17, 17, 20);
+    LocalDateTime multiHopSfoArrival = LocalDateTime.of(2021, 5, 17, 21, 0);
+    CreateFlightDto multihopSfoFlight = CreateFlightDto.builder()
         .originId("DCA")
-        .destinationId("SFO")
+        .destinationId("Sfo")
         .airplaneId(1L)
-        .approximateDateTimeStart(multiHopSFODeparture)
-        .approximateDateTimeEnd(multiHopSFOArrival)
+        .approximateDateTimeStart(multiHopSfoDeparture)
+        .approximateDateTimeEnd(multiHopSfoArrival)
         .build();
-    flightService.createNewFlight(multihopSFOFlight);
+    flightService.createNewFlight(multihopSfoFlight);
 
-    LocalDateTime multiHopSFOLAXDeparture = LocalDateTime.of(2021, 5, 17, 22, 20);
-    LocalDateTime multiHopSFOLAXArrival = LocalDateTime.of(2021, 5, 18, 2, 0);
-    CreateFlightDto multihopSFOLAXFlight = CreateFlightDto.builder()
-        .originId("SFO")
+    LocalDateTime multiHopSfoLaxDeparture = LocalDateTime.of(2021, 5, 17, 22, 20);
+    LocalDateTime multiHopSfoLaxArrival = LocalDateTime.of(2021, 5, 18, 2, 0);
+    CreateFlightDto multiHopSfoLaxFlight = CreateFlightDto.builder()
+        .originId("Sfo")
         .destinationId("LAX")
         .airplaneId(1L)
-        .approximateDateTimeStart(multiHopSFOLAXDeparture)
-        .approximateDateTimeEnd(multiHopSFOLAXArrival)
+        .approximateDateTimeStart(multiHopSfoLaxDeparture)
+        .approximateDateTimeEnd(multiHopSfoLaxArrival)
         .build();
-    flightService.createNewFlight(multihopSFOLAXFlight);
+    flightService.createNewFlight(multiHopSfoLaxFlight);
 
-    LocalDateTime multiHopLAXDeparture = LocalDateTime.of(2021, 5, 17, 22, 20);
-    LocalDateTime multiHopLAXArrival = LocalDateTime.of(2021, 5, 18, 2, 0);
-    CreateFlightDto multihopLAXFlight = CreateFlightDto.builder()
+    LocalDateTime multiHopLaxDeparture = LocalDateTime.of(2021, 5, 17, 22, 20);
+    LocalDateTime multiHopLaxArrival = LocalDateTime.of(2021, 5, 18, 2, 0);
+    CreateFlightDto multiHopLaxFlight = CreateFlightDto.builder()
         .originId("JFK")
         .destinationId("LAX")
         .airplaneId(1L)
-        .approximateDateTimeStart(multiHopLAXDeparture)
-        .approximateDateTimeEnd(multiHopLAXArrival)
+        .approximateDateTimeStart(multiHopLaxDeparture)
+        .approximateDateTimeEnd(multiHopLaxArrival)
         .build();
-    flightService.createNewFlight(multihopLAXFlight);
+    flightService.createNewFlight(multiHopLaxFlight);
 
-    LocalDateTime multiHopJFKSFODeparture = LocalDateTime.of(2021, 5, 17, 22, 20);
-    LocalDateTime multiHopJFKSFOArrival = LocalDateTime.of(2021, 5, 18, 2, 0);
-    CreateFlightDto multihopKFJSFOFlight = CreateFlightDto.builder()
+    LocalDateTime multiHopJfkSfoDeparture = LocalDateTime.of(2021, 5, 17, 22, 20);
+    LocalDateTime multiHopJfkSfoArrival = LocalDateTime.of(2021, 5, 18, 2, 0);
+    CreateFlightDto multiHopJfkSfoFlight = CreateFlightDto.builder()
         .originId("JFK")
-        .destinationId("SFO")
+        .destinationId("Sfo")
         .airplaneId(1L)
-        .approximateDateTimeStart(multiHopJFKSFODeparture)
-        .approximateDateTimeEnd(multiHopJFKSFOArrival)
+        .approximateDateTimeStart(multiHopJfkSfoDeparture)
+        .approximateDateTimeEnd(multiHopJfkSfoArrival)
         .build();
-    flightService.createNewFlight(multihopKFJSFOFlight);
+    flightService.createNewFlight(multiHopJfkSfoFlight);
 
-    LocalDateTime multiHopSFOLAXDeparture1 = LocalDateTime.of(2021, 5, 18, 5, 20);
-    LocalDateTime multiHopSFOLAXArrival1 = LocalDateTime.of(2021, 5, 18, 7, 0);
-    CreateFlightDto multihopSFOLAXFlight1 = CreateFlightDto.builder()
-        .originId("SFO")
+    LocalDateTime multiHopSfoLaxDeparture1 = LocalDateTime.of(2021, 5, 18, 5, 20);
+    LocalDateTime multiHopSfoLaxArrival1 = LocalDateTime.of(2021, 5, 18, 7, 0);
+    CreateFlightDto multiHopSfoLaxFlight1 = CreateFlightDto.builder()
+        .originId("Sfo")
         .destinationId("LAX")
         .airplaneId(1L)
-        .approximateDateTimeStart(multiHopSFOLAXDeparture1)
-        .approximateDateTimeEnd(multiHopSFOLAXArrival1)
+        .approximateDateTimeStart(multiHopSfoLaxDeparture1)
+        .approximateDateTimeEnd(multiHopSfoLaxArrival1)
         .build();
-    flightService.createNewFlight(multihopSFOLAXFlight1);
+    flightService.createNewFlight(multiHopSfoLaxFlight1);
 
     LocalDateTime departure1 = LocalDateTime.of(2021, 4, 15, 12, 20);
     LocalDateTime arrival1 = LocalDateTime.of(2021, 4, 15, 16, 0);
@@ -188,7 +188,7 @@ public class H2DataBootstrap implements CommandLineRunner {
   }
 
   private void loadAirplanes() {
-    Airplane Boeing747 = Airplane.builder()
+    Airplane boeing747 = Airplane.builder()
         .name("Boeing 747")
         .seatConfigurations(List.of(
             SeatConfiguration.builder()
@@ -203,8 +203,8 @@ public class H2DataBootstrap implements CommandLineRunner {
                 .build()
         ))
         .build();
-    airplaneRepository.save(Boeing747);
-    Airplane Boeing777 = Airplane.builder()
+    airplaneRepository.save(boeing747);
+    Airplane boeing777 = Airplane.builder()
         .name("Boeing 777")
         .seatConfigurations(List.of(
             SeatConfiguration.builder()
@@ -219,8 +219,8 @@ public class H2DataBootstrap implements CommandLineRunner {
                 .build()
         ))
         .build();
-    airplaneRepository.save(Boeing777);
-    Airplane Boeing737 = Airplane.builder()
+    airplaneRepository.save(boeing777);
+    Airplane boeing737 = Airplane.builder()
         .name("Boeing 737")
         .seatConfigurations(List.of(
             SeatConfiguration.builder()
@@ -235,78 +235,78 @@ public class H2DataBootstrap implements CommandLineRunner {
                 .build()
         ))
         .build();
-    airplaneRepository.save(Boeing737);
+    airplaneRepository.save(boeing737);
   }
 
   private void loadAirports() {
 
-    Airport Dulles = Airport.builder()
+    Airport dulles = Airport.builder()
         .iataId("IAD")
         .name("Dulles International Airport")
         .streetAddress("1 Saarinen Cir")
         .city("Dulles")
         .state("VA")
-        .servicingArea(servicingAreaRepository.findByServicingArea("D.C").orElseThrow())
+        .servicingArea(servicingAreaRepository.findByAreaName("D.C").orElseThrow())
         .zipcode("20166")
         .build();
-    airportRepository.save(Dulles);
-    Airport Reagan = Airport.builder()
+    airportRepository.save(dulles);
+    Airport reagan = Airport.builder()
         .iataId("DCA")
         .name("Ronald Reagan Washington National Airport")
         .streetAddress("2401 Smith Blvd")
         .city("Arlington")
         .state("VA")
-        .servicingArea(servicingAreaRepository.findByServicingArea("D.C").orElseThrow())
+        .servicingArea(servicingAreaRepository.findByAreaName("D.C").orElseThrow())
         .zipcode("22202")
         .build();
-    airportRepository.save(Reagan);
-    Airport Baltimore = Airport.builder()
+    airportRepository.save(reagan);
+    Airport baltimore = Airport.builder()
         .iataId("BWI")
         .name("Baltimore/Washington International Thurgood Marshall Airport")
         .streetAddress("Baltimore")
         .city("Baltimore")
         .state("MD")
-        .servicingArea(servicingAreaRepository.findByServicingArea("D.C").orElseThrow())
+        .servicingArea(servicingAreaRepository.findByAreaName("D.C").orElseThrow())
         .zipcode("21240")
         .build();
-    airportRepository.save(Baltimore);
-    Airport JFK = Airport.builder()
+    airportRepository.save(baltimore);
+    Airport jfk = Airport.builder()
         .iataId("JFK")
         .name("John F. Kennedy International Airport")
         .streetAddress("Queens")
         .city("Queens")
         .state("NY")
-        .servicingArea(servicingAreaRepository.findByServicingArea("NYC").orElseThrow())
+        .servicingArea(servicingAreaRepository.findByAreaName("NYC").orElseThrow())
         .zipcode("11430")
         .build();
-    airportRepository.save(JFK);
-    Airport LAX = Airport.builder()
+    airportRepository.save(jfk);
+    Airport lax = Airport.builder()
         .iataId("LAX")
         .name("Los Angeles International Airport")
         .streetAddress("1 World Way")
         .city("Los Angeles")
         .state("CA")
-        .servicingArea(servicingAreaRepository.findByServicingArea("LA").orElseThrow())
+        .servicingArea(servicingAreaRepository.findByAreaName("LA").orElseThrow())
         .zipcode("90045")
         .build();
-    airportRepository.save(LAX);
-    Airport SanFran = Airport.builder()
-        .iataId("SFO")
+    airportRepository.save(lax);
+    Airport sf = Airport.builder()
+        .iataId("Sfo")
         .name("San Francisco International Airport")
         .streetAddress("San Francisco")
         .city("San Francisco")
         .state("CA")
-        .servicingArea(servicingAreaRepository.findByServicingArea("SF").orElseThrow())
+        .servicingArea(servicingAreaRepository.findByAreaName("SF").orElseThrow())
         .zipcode("94128")
         .build();
-    airportRepository.save(SanFran);
+    airportRepository.save(sf);
   }
 
   private void loadServicingAreas() {
     String[] servicingAreas = {"D.C", "NYC", "LA", "SF", "SEA", "ATL", "HOU", "NSH", "CHI"};
     for (String area : servicingAreas) {
       var tempArea = ServicingArea.builder()
-          .servicingArea(area)
+          .areaName(area)
           .build();
       servicingAreaRepository.save(tempArea);
     }

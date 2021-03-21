@@ -3,7 +3,6 @@ package com.ss.utopia.flights.service;
 import com.ss.utopia.flights.dto.airport.CreateAirportDto;
 import com.ss.utopia.flights.dto.airport.UpdateAirportDto;
 import com.ss.utopia.flights.entity.airport.Airport;
-import com.ss.utopia.flights.entity.airport.ServicingArea;
 import java.util.List;
 
 public interface AirportService {
