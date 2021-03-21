@@ -55,12 +55,12 @@ public class FlightServiceImplTest {
 
     final ServicingArea DCRegion = ServicingArea.builder()
             .id(1L)
-            .servicingArea("D.C")
+            .areaName("D.C")
             .build();
 
     final ServicingArea LARegion = ServicingArea.builder()
             .id(2L)
-            .servicingArea("LA")
+            .areaName("LA")
             .build();
 
     final Airport DullesAirport = Airport.builder()
@@ -241,7 +241,7 @@ public class FlightServiceImplTest {
                 .build();
 
         when(flightService.getAllFlights()).thenReturn(List.of(testFlight));
-        when(servicingAreaRepository.findByServicingArea(any(String.class))).thenReturn(Optional.empty());
+        when(servicingAreaRepository.findByAreaName(any(String.class))).thenReturn(Optional.empty());
         when(airportRepository.findById(any(String.class))).thenReturn(Optional.empty());
 
         assertThrows(NoSuchAirportException.class, () -> flightService.getFlightByCriteria(dto));
