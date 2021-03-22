@@ -11,7 +11,7 @@
   </parent>
   <groupId>com.github.jms-smoothstack-utopia</groupId>
   <artifactId>ss-utopia-flights</artifactId>
-  <version>1.0</version>
+  <version>1.1-SNAPSHOT</version>
   <name>Utopia Flights API</name>
   <description>API for flight, airport, and airplane management</description>
   <properties>
