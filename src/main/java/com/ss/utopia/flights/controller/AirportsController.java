@@ -3,13 +3,14 @@ package com.ss.utopia.flights.controller;
 import com.ss.utopia.flights.dto.airport.CreateAirportDto;
 import com.ss.utopia.flights.dto.airport.UpdateAirportDto;
 import com.ss.utopia.flights.entity.airport.Airport;
+import com.ss.utopia.flights.security.permissions.AdminOnlyPermission;
+import com.ss.utopia.flights.security.permissions.EmployeeOnlyPermission;
 import com.ss.utopia.flights.service.AirportService;
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 import javax.validation.Valid;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,13 +22,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RestController
-@RequestMapping("/airports")
+@RequestMapping(EndpointConstants.API_V_0_1_AIRPORTS)
 public class AirportsController {
 
-  public static final String MAPPING = "/airports";
+  public static final String MAPPING = EndpointConstants.API_V_0_1_AIRPORTS;
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(AirportsController.class);
   private final AirportService service;
 
   public AirportsController(AirportService service) {
@@ -37,7 +38,7 @@ public class AirportsController {
 
   @GetMapping(produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
   public ResponseEntity<List<Airport>> getAllAirports() {
-    LOGGER.info("GET Airport all");
+    log.info("GET Airport all");
     var airports = service.getAllAirports();
     if (airports.isEmpty()) {
       return ResponseEntity.noContent().build();
@@ -48,31 +49,34 @@ public class AirportsController {
   @GetMapping(value = "/{id}", produces = {MediaType.APPLICATION_JSON_VALUE,
       MediaType.APPLICATION_XML_VALUE})
   public ResponseEntity<Airport> getAirportById(@PathVariable String id) {
-    LOGGER.info("GET Airport id=" + id);
+    log.info("GET Airport id=" + id);
     return ResponseEntity.of(Optional.ofNullable(service.getAirportById(id)));
   }
 
-
+  @EmployeeOnlyPermission
   @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-  public ResponseEntity<Airport> createNewAirport(@Valid @RequestBody CreateAirportDto createAirportDto) {
-    LOGGER.info("POST Airport");
+  public ResponseEntity<Airport> createNewAirport(@Valid @RequestBody
+                                                      CreateAirportDto createAirportDto) {
+    log.info("POST Airport");
     var airport = service.createNewAirport(createAirportDto);
     var uri = URI.create(MAPPING + "/" + airport.getIataId());
     return ResponseEntity.created(uri).body(airport);
   }
 
+  @EmployeeOnlyPermission
   @PutMapping(value = "/{id}", consumes = {MediaType.APPLICATION_JSON_VALUE,
       MediaType.APPLICATION_XML_VALUE})
-  public ResponseEntity<?> updateAirport(@PathVariable String id,
+  public ResponseEntity<Void> updateAirport(@PathVariable String id,
                                          @Valid @RequestBody UpdateAirportDto updateAirportDto) {
-    LOGGER.info("PUT Airport id=" + id);
+    log.info("PUT Airport id=" + id);
     service.updateAirport(id, updateAirportDto);
     return ResponseEntity.noContent().build();
   }
 
+  @AdminOnlyPermission
   @DeleteMapping("/{id}")
-  public ResponseEntity<?> deleteAirport(@PathVariable String id) {
-    LOGGER.info("DELETE Airport id=" + id);
+  public ResponseEntity<Void> deleteAirport(@PathVariable String id) {
+    log.info("DELETE Airport id=" + id);
     service.deleteAirport(id);
     return ResponseEntity.noContent().build();
   }

@@ -2,6 +2,7 @@ package com.ss.utopia.flights.entity.airport;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -34,5 +35,9 @@ public class Airport {
 
   @NotBlank
   private String zipcode;
+
+  //Which metropolitan area does this airport service
+  @ManyToOne
+  private ServicingArea servicingArea;
 
 }

@@ -2,13 +2,14 @@ package com.ss.utopia.flights.controller;
 
 import com.ss.utopia.flights.dto.airplane.AirplaneDto;
 import com.ss.utopia.flights.entity.airplane.Airplane;
+import com.ss.utopia.flights.security.permissions.AdminOnlyPermission;
+import com.ss.utopia.flights.security.permissions.EmployeeOnlyPermission;
 import com.ss.utopia.flights.service.AirplaneService;
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 import javax.validation.Valid;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,22 +21,23 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RestController
-@RequestMapping("/airplanes")
+@RequestMapping(EndpointConstants.API_V_0_1_AIRPLANES)
 public class AirplanesController {
 
-  public static final String MAPPING = "/airplanes";
+  public static final String MAPPING = EndpointConstants.API_V_0_1_AIRPLANES;
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(AirplanesController.class);
   private final AirplaneService service;
 
   public AirplanesController(AirplaneService service) {
     this.service = service;
   }
 
+  @EmployeeOnlyPermission
   @GetMapping(produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
   public ResponseEntity<List<Airplane>> getAllAirplanes() {
-    LOGGER.info("GET Airplane all");
+    log.info("GET Airplane all");
     var airports = service.getAllAirplanes();
     if (airports.isEmpty()) {
       return ResponseEntity.noContent().build();
@@ -43,33 +45,36 @@ public class AirplanesController {
     return ResponseEntity.ok(airports);
   }
 
-  @GetMapping(value = "/{id}", produces = {MediaType.APPLICATION_JSON_VALUE,
-      MediaType.APPLICATION_XML_VALUE})
+  @GetMapping(value = "/{id}",
+      produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
   public ResponseEntity<Airplane> getAirplaneById(@PathVariable Long id) {
-    LOGGER.info("GET Airplane id=" + id);
+    log.info("GET Airplane id=" + id);
     return ResponseEntity.of(Optional.ofNullable(service.getAirplaneById(id)));
   }
 
+  @EmployeeOnlyPermission
   @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
   public ResponseEntity<Airplane> createNewAirplane(@Valid @RequestBody AirplaneDto airplaneDto) {
-    LOGGER.info("POST Airplane");
+    log.info("POST Airplane");
     var airplane = service.createNewAirplane(airplaneDto);
     var uri = URI.create(MAPPING + "/" + airplane.getId());
     return ResponseEntity.created(uri).body(airplane);
   }
 
-  @PutMapping(value = "/{id}", consumes = {MediaType.APPLICATION_JSON_VALUE,
-      MediaType.APPLICATION_XML_VALUE})
-  public ResponseEntity<?> updateAirplane(@PathVariable Long id,
-                                                  @Valid @RequestBody AirplaneDto airplaneDto) {
-    LOGGER.info("PUT Airplane id=" + id);
+  @EmployeeOnlyPermission
+  @PutMapping(value = "/{id}",
+      consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+  public ResponseEntity<Void> updateAirplane(@PathVariable Long id,
+                                             @Valid @RequestBody AirplaneDto airplaneDto) {
+    log.info("PUT Airplane id=" + id);
     service.updateAirplane(id, airplaneDto);
     return ResponseEntity.noContent().build();
   }
 
+  @AdminOnlyPermission
   @DeleteMapping("/{id}")
-  public ResponseEntity<?> deleteAirplane(@PathVariable Long id) {
-    LOGGER.info("DELETE Airplane id="+id);
+  public ResponseEntity<Void> deleteAirplane(@PathVariable Long id) {
+    log.info("DELETE Airplane id=" + id);
     service.deleteAirplane(id);
     return ResponseEntity.noContent().build();
   }
