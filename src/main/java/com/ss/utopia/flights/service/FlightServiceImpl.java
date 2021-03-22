@@ -193,19 +193,19 @@ public class FlightServiceImpl implements FlightService {
 
     var numberOfPassengers = flightSearchDto.getNumberOfPassengers().orElse(1);
 
-    if (!flightSearchDto.isMultiHop()) {
-      return findNonStopFlightsBasedOnCriteria(originAirports,
-                                               destinationAirports,
-                                               flightSearchDto.getDepartureDate(),
-                                               flightSearchDto.getReturnDate(),
-                                               numberOfPassengers);
-    } else {
+//    if (!flightSearchDto.isMultiHop()) {
+//      return findNonStopFlightsBasedOnCriteria(originAirports,
+//                                               destinationAirports,
+//                                               flightSearchDto.getDepartureDate(),
+//                                               flightSearchDto.getReturnDate(),
+//                                               numberOfPassengers);
+//    } else {
       return findMultiHopFlightsBasedOnCriteria(originAirports,
                                                 destinationAirports,
                                                 flightSearchDto.getDepartureDate(),
                                                 flightSearchDto.getReturnDate(),
                                                 numberOfPassengers);
-    }
+//    }
   }
 
   private Map<String, ?> findMultiHopFlightsBasedOnCriteria(List<Airport> originAirports,
