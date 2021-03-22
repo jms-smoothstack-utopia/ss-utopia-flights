@@ -21,7 +21,6 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -150,13 +149,6 @@ public class FlightServiceImpl implements FlightService {
     return flight.getSeats();
   }
 
-  public List<Seat> getAvailableSeats(Long flightId) {
-    log.trace("getAvailableSeats id=" + flightId);
-    return getFlightSeats(flightId).stream().parallel()
-        .filter(seats -> seats.getSeatStatus() == SeatStatus.AVAILABLE)
-        .collect(Collectors.toList());
-  }
-
   @Override
   public void updateFlightSeats(Long flightId, Map<String, UpdateSeatDto> seatDtoMap) {
     log.trace("updateFlightSeats id=" + flightId);
@@ -193,19 +185,12 @@ public class FlightServiceImpl implements FlightService {
 
     var numberOfPassengers = flightSearchDto.getNumberOfPassengers().orElse(1);
 
-    //    if (!flightSearchDto.isMultiHop()) {
-    //      return findNonStopFlightsBasedOnCriteria(originAirports,
-    //                                               destinationAirports,
-    //                                               flightSearchDto.getDepartureDate(),
-    //                                               flightSearchDto.getReturnDate(),
-    //                                               numberOfPassengers);
-    //    } else {
     return findMultiHopFlightsBasedOnCriteria(originAirports,
                                               destinationAirports,
                                               flightSearchDto.getDepartureDate(),
                                               flightSearchDto.getReturnDate(),
                                               numberOfPassengers);
-    //    }
+
   }
 
   private Map<String, ?> findMultiHopFlightsBasedOnCriteria(List<Airport> originAirports,
@@ -247,31 +232,6 @@ public class FlightServiceImpl implements FlightService {
     return findAllPaths.returnAllValidFlights();
   }
 
-  private Map<String, List<Flight>> findNonStopFlightsBasedOnCriteria(
-      List<Airport> originAirports,
-      List<Airport> destinationAirports,
-      LocalDate departureDate,
-      Optional<LocalDate> returnDate,
-      Integer passengerCount) {
-    log.trace("findNonStopFlightsBasedOnCriteria");
-    List<Flight> flightsWithCriteria = findNonStopFlightsBetweenLists(originAirports,
-                                                                      destinationAirports,
-                                                                      departureDate,
-                                                                      passengerCount);
-    var setOfFlights = new java.util.HashMap<>(Collections.<String, List<Flight>>emptyMap());
-    setOfFlights.put("Origin to Destination", flightsWithCriteria);
-
-    if (returnDate.isPresent()) {
-      List<Flight> returnFlightsWithCriteria = findNonStopFlightsBetweenLists(destinationAirports,
-                                                                              originAirports,
-                                                                              returnDate.get(),
-                                                                              passengerCount);
-      setOfFlights.put("Destination to Origin", returnFlightsWithCriteria);
-    }
-
-    return setOfFlights;
-  }
-
   private List<Airport> validateAreasAndReturnAirports(String[] locations) {
     log.trace("validateAreasAndReturnAirports");
     List<Airport> processedList = new ArrayList<>();
@@ -291,19 +251,5 @@ public class FlightServiceImpl implements FlightService {
       throw new NoSuchAirportException(Arrays.asList(locations));
     }
     return processedList;
-  }
-
-  private List<Flight> findNonStopFlightsBetweenLists(List<Airport> origins,
-                                                      List<Airport> destinations,
-                                                      LocalDate departureDate,
-                                                      Integer passengerCount) {
-    log.trace("findNonStopFlightsBetweenLists");
-
-    return getAllActiveFlights().stream()
-        .filter(flight -> origins.contains(flight.getOrigin())
-            && destinations.contains(flight.getDestination()))
-        .filter(flight -> flight.getApproximateDateTimeStart().toLocalDate().equals(departureDate))
-        .filter(flight -> getAvailableSeats(flight.getId()).size() >= passengerCount)
-        .collect(Collectors.toList());
   }
 }
