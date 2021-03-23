@@ -29,6 +29,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .requestMatchers(CorsUtils::isCorsRequest).permitAll()
         .antMatchers(HttpMethod.GET, "/api-docs").permitAll()
         .antMatchers(HttpMethod.GET, "/**").permitAll()
+        .antMatchers(HttpMethod.GET, "/swagger-ui.html")
+        .permitAll()
+        .antMatchers(HttpMethod.GET, "/swagger-ui/**")
+        .permitAll()
         .anyRequest().authenticated()
         .and()
         .addFilter(new JwtAuthenticationVerificationFilter(authenticationManagerBean(),
